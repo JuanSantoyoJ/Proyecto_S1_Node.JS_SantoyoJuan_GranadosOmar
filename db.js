@@ -8,7 +8,7 @@ let db;
 
 
 
-async function connect(){
+async function connectDB(){
     if(db) return db; //Retorna la variable si tiene alguna conexión
     client = new MongoClient(uri);//Importa MongoClient a client
     await client.connect(); //Abre la conexión
@@ -20,4 +20,4 @@ async function disconnect(){
     if(client) await client.close();
 }
 
-module.exports={connect, disconnect};
+module.exports={connectDB, disconnect};
