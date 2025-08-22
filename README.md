@@ -1,61 +1,101 @@
 # Gestor de Portafolio de Proyectos Freelance
 
-## Introducción
+## Descripción del proyecto
 
 Este proyecto es una aplicación de línea de comandos (CLI) desarrollada en **Node.js** que permite a freelancers gestionar de manera integral su portafolio profesional. La herramienta facilita la administración de clientes, propuestas, proyectos, contratos, entregables y finanzas, centralizando toda la información relevante para el trabajo independiente en un solo lugar.
 
-El sistema está diseñado bajo principios de **Programación Orientada a Objetos** y aplica los **principios SOLID** junto a patrones de diseño como *Repository* y *Factory*, asegurando un código mantenible, escalable y fácil de probar. La experiencia de usuario en consola se ve enriquecida mediante el uso de librerías como **chalk**.
+El sistema está diseñado bajo principios de **Programación Orientada a Objetos** y aplica los **principios SOLID** junto a patrones de diseño como **Repository** y **Command**, asegurando un código mantenible, escalable y fácil de probar. La experiencia de usuario en consola se ve enriquecida mediante el uso de librerías como **chalk**.
 
-La persistencia de datos se realiza en **MongoDB** utilizando el driver oficial, implementando operaciones con transacciones reales para garantizar la integridad de la información, especialmente en procesos financieros y de entregables. El modelo de datos está cuidadosamente validado y estructurado en la carpeta `/models`.
+La persistencia de datos se realiza en **MongoDB** utilizando el driver oficial, implementando operaciones con transacciones reales para garantizar la integridad de la información, especialmente en procesos financieros y de entregables.
 
-Este gestor busca ser una solución robusta y profesional para freelancers que desean llevar un control detallado y seguro de sus proyectos y relaciones comerciales, facilitando la toma de decisiones y el seguimiento del progreso de su portafolio.
+## Instrucciones de instalación y uso
 
-## Caso de Estudio
+Para instalar y ejecutar este proyecto localmente, sigue estos pasos:
 
-Esta aplicación está diseñada para ser el centro de operaciones de cualquier profesional freelance que busque optimizar su flujo de trabajo. A continuación, se describe un caso de uso general que ilustra cómo la herramienta apoya el ciclo de vida completo de un proyecto.
+1.  **Clona el repositorio:**
+    ```bash
+    git clone <https://github.com/JuanSantoyoJ/Proyecto_S1_Node.JS_SantoyoJuan_GranadosOmar>
+    ```
 
-**El Flujo de Trabajo Típico:**
+2.  **Navega a la carpeta del proyecto:**
+    ```bash
+    cd Proyecto_S1_Node.JS_SantoyoJuan_GranadosOmar
+    ```
 
-1.  **Onboarding del Cliente:**
-    *   Un freelancer comienza registrando un nuevo cliente en el sistema. Esto crea un perfil centralizado con toda la información de contacto y fiscal, eliminando la necesidad de buscar datos en diferentes lugares.
+3.  **Instala las dependencias:**
+    ```bash
+    npm install
+    ```
 
-2.  **De la Propuesta al Proyecto:**
-    *   Cuando surge una oportunidad, el freelancer crea una propuesta formal directamente desde la aplicación, especificando el alcance, los costos y los plazos.
-    *   Una vez que el cliente aprueba la propuesta, esta se convierte en un proyecto activo con un solo comando. Este proceso genera automáticamente un contrato y vincula toda la información, asegurando una transición sin fricciones.
+4.  **Configura las variables de entorno:**
+    *   Crea un archivo `.env` en la raíz del proyecto.
+    *   Añade la siguiente línea, reemplazando `<TU_CONNECTION_STRING>` con tu cadena de conexión de MongoDB:
+        ```
+        MONGO_URI=<TU_CONNECTION_STRING>
+        ```
 
-3.  **Ejecución y Seguimiento:**
-    *   Dentro del proyecto, el freelancer desglosa el trabajo en entregables específicos, cada uno con su propia fecha límite y estado. Esto permite un seguimiento granular del progreso y ayuda a identificar posibles cuellos de botella a tiempo.
+5.  **Ejecuta la aplicación:**
+    ```bash
+    node app.js
+    ```
 
-4.  **Gestión Financiera Integrada:**
-    *   A medida que el proyecto avanza, se registran todos los movimientos financieros. Los pagos recibidos se asocian directamente al proyecto, y los gastos relacionados (como software o recursos externos) también se contabilizan.
-    *   La herramienta permite calcular balances para entender la rentabilidad de cada proyecto o cliente.
+## Estructura del proyecto
 
-5.  **Cierre y Análisis:**
-    *   Al completar todos los entregables y recibir el pago final, el proyecto se marca como "finalizado".
-    *   El sistema mantiene un registro histórico completo, lo que facilita la consulta de proyectos pasados, la generación de informes y la planificación a futuro.
+El proyecto está organizado siguiendo una arquitectura que separa las responsabilidades en diferentes capas, facilitando su mantenimiento y escalabilidad.
 
-**Beneficio Principal:**
-El gestor centraliza todas las facetas del trabajo freelance en una única interfaz de línea de comandos, aportando orden, eficiencia y control. Esto permite al profesional enfocarse en lo más importante: entregar un trabajo de calidad.
+```
+/
+├── app.js                # Punto de entrada de la aplicación
+├── db.js                 # Configuración y conexión de la base de datos
+├── package.json          # Dependencias y scripts del proyecto
+├── README.md             # Documentación del proyecto
+├── commands/             # (Patrón Command) Comandos que encapsulan las acciones
+├── controllers/          # Lógica de negocio y coordinación
+├── models/               # Definición de los modelos de datos
+├── repositories/         # (Patrón Repository) Abstracción del acceso a datos
+└── views/                # Manejo de la interfaz de línea de comandos (CLI)
+```
 
-## Requisitos del Sistema
+-   **`app.js`**: Orquestador principal. Inicializa la conexión a la base de datos y gestiona el menú principal.
+-   **`db.js`**: Centraliza la configuración y la lógica para conectarse a MongoDB.
+-   **`views/`**: Se encarga de la interacción con el usuario (menús, prompts). Cuando un usuario elige una acción, la vista crea un objeto **Command** correspondiente.
+-   **`commands/`**: Cada archivo en esta carpeta representa una acción específica que el usuario puede realizar (ej. `CrearClienteCommand.js`). Esto encapsula los detalles de la operación.
+-   **`controllers/`**: Ejecutan los comandos. Contienen la lógica de negocio de alto nivel y coordinan las operaciones, utilizando los repositorios para interactuar con los datos.
+-   **`repositories/`**: Abstraen la lógica de acceso a la base de datos. Proporcionan una interfaz limpia (ej. `findById`, `save`) para que los controladores no necesiten saber cómo se guardan o recuperan los datos.
+-   **`models/`**: Definen la estructura y validaciones de los datos.
 
-Para instalar y ejecutar este proyecto localmente, necesitarás tener instalado el siguiente software:
+## Principios SOLID aplicados
 
--   **Node.js**: Se recomienda la versión `18.x` o superior.
--   **npm**: Generalmente se instala junto con Node.js.
--   **MongoDB**: Es necesario tener una instancia de MongoDB en ejecución, ya sea localmente o en un servicio en la nube como MongoDB Atlas.
+-   **Principio de Responsabilidad Única (SRP):** Cada clase tiene una única responsabilidad. Las `Views` manejan la interacción con el usuario, los `Controllers` orquestan la lógica de negocio, los `Repositories` gestionan el acceso a datos y los `Models` definen la estructura de los datos.
+-   **Principio de Abierto/Cerrado (OCP):** La arquitectura permite añadir nuevas funcionalidades (como nuevos comandos o entidades) creando nuevas clases sin necesidad de modificar el código existente.
+-   **Principio de Sustitución de Liskov (LSP):** Se aplica en la implementación de los patrones, donde las clases base pueden ser sustituidas por sus subtipos sin alterar el comportamiento del programa.
+-   **Principio de Segregación de Interfaces (ISP):** Se definen interfaces específicas para cada tipo de operación, evitando que las clases implementen métodos que no necesitan.
+-   **Principio de Inversión de Dependencias (DIP):** Los módulos de alto nivel (Controllers) no dependen de los de bajo nivel (Repositories), sino de abstracciones. Esto se logra mediante la inyección de dependencias.
 
-## Planificación del Proyecto
+## Patrones de diseño usados y dónde
 
-Este proyecto se gestiona utilizando la metodología **Scrum** para asegurar un desarrollo iterativo, flexible y enfocado en la entrega de valor.
+-   **Patrón Repository:**
+    -   **Ubicación:** Carpeta `/repositories`.
+    -   **Propósito:** Desacopla la lógica de negocio de la lógica de acceso a datos. Los controladores utilizan los repositorios para obtener y guardar datos sin conocer los detalles de la implementación de la base de datos. Esto facilita las pruebas y permite cambiar de motor de base de datos con un impacto mínimo.
 
--   **Herramienta de Gestión:** Para el seguimiento de tareas, sprints y artefactos de Scrum, se utiliza **Trello**.
--   **Flujo de Trabajo:** El desarrollo se organiza en Sprints de una semana, cada uno con un objetivo claro y un conjunto de historias de usuario a completar.
--   **Roles del Equipo:**
-    -   **Product Owner:** Juan Santoyo
-    -   **Scrum Master:** Omar Granados
-    -   **Developer(s):** Juan Santoyo, Omar Granados
--   **Documentación:** La planificación detallada, incluyendo el backlog del producto, las historias de usuario y el registro de los sprints, se encuentra en el documento `Planificacion_Scrum.pdf` adjunto en este repositorio.
+-   **Patrón Command:**
+    -   **Ubicación:** Carpeta `/commands`.
+    -   **Propósito:** Encapsula una solicitud como un objeto, permitiendo parametrizar clientes con diferentes solicitudes, encolar o registrar solicitudes y soportar operaciones que se pueden deshacer. En este proyecto, cada acción del usuario (crear cliente, añadir proyecto) es un `Command` que la `View` instancia y el `Controller` ejecuta.
+
+## Consideraciones técnicas
+
+-   **Base de Datos:** Se utiliza el driver oficial de **MongoDB** (`mongodb`) para la persistencia de datos, evitando el uso de ODMs como Mongoose para tener un control más granular sobre las operaciones.
+-   **Transacciones:** Las operaciones críticas que involucran múltiples pasos (como la creación de un proyecto a partir de una propuesta o los registros financieros) se envuelven en **transacciones de MongoDB** para garantizar la atomicidad y consistencia de los datos.
+-   **Manejo de Errores:** La aplicación cuenta con un manejo de errores robusto para capturar fallos en la conexión a la base de datos, validaciones de datos y lógica de negocio, informando al usuario de manera clara.
+
+## Créditos
+
+Este proyecto fue desarrollado por:
+
+-   **Juan Santoyo** (`SantoyoJuan`)
+-   **Omar Granados** (`GranadosOmar`)
+
+*Desarrollado entre el 21 y el 27 de agosto.*
 
 
 
