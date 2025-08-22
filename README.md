@@ -4,7 +4,7 @@
 
 Este proyecto es una aplicación de línea de comandos (CLI) desarrollada en **Node.js** que permite a freelancers gestionar de manera integral su portafolio profesional. La herramienta facilita la administración de clientes, propuestas, proyectos, contratos, entregables y finanzas, centralizando toda la información relevante para el trabajo independiente en un solo lugar.
 
-El sistema está diseñado bajo principios de **Programación Orientada a Objetos** y aplica los **principios SOLID** junto a patrones de diseño como *Repository* y *Factory*, asegurando un código mantenible, escalable y fácil de probar. La experiencia de usuario en consola se ve enriquecida mediante el uso de librerías como **chalk** e **inquirer**.
+El sistema está diseñado bajo principios de **Programación Orientada a Objetos** y aplica los **principios SOLID** junto a patrones de diseño como *Repository* y *Factory*, asegurando un código mantenible, escalable y fácil de probar. La experiencia de usuario en consola se ve enriquecida mediante el uso de librerías como **chalk**.
 
 La persistencia de datos se realiza en **MongoDB** utilizando el driver oficial, implementando operaciones con transacciones reales para garantizar la integridad de la información, especialmente en procesos financieros y de entregables. El modelo de datos está cuidadosamente validado y estructurado en la carpeta `/models`.
 
@@ -36,4 +36,26 @@ Esta aplicación está diseñada para ser el centro de operaciones de cualquier 
 
 **Beneficio Principal:**
 El gestor centraliza todas las facetas del trabajo freelance en una única interfaz de línea de comandos, aportando orden, eficiencia y control. Esto permite al profesional enfocarse en lo más importante: entregar un trabajo de calidad.
+
+## Requisitos del Sistema
+
+Para instalar y ejecutar este proyecto localmente, necesitarás tener instalado el siguiente software:
+
+-   **Node.js**: Se recomienda la versión `18.x` o superior.
+-   **npm**: Generalmente se instala junto con Node.js.
+-   **MongoDB**: Es necesario tener una instancia de MongoDB en ejecución, ya sea localmente o en un servicio en la nube como MongoDB Atlas.
+
+## Planificación del Proyecto
+
+Este proyecto se gestiona utilizando la metodología **Scrum** para asegurar un desarrollo iterativo, flexible y enfocado en la entrega de valor.
+
+-   **Herramienta de Gestión:** Para el seguimiento de tareas, sprints y artefactos de Scrum, se utiliza **Trello**.
+-   **Flujo de Trabajo:** El desarrollo se organiza en Sprints de una semana, cada uno con un objetivo claro y un conjunto de historias de usuario a completar.
+-   **Roles del Equipo:**
+    -   **Product Owner:** Juan Santoyo
+    -   **Scrum Master:** Omar Granados
+    -   **Developer(s):** Juan Santoyo, Omar Granados
+-   **Documentación:** La planificación detallada, incluyendo el backlog del producto, las historias de usuario y el registro de los sprints, se encuentra en el documento `Planificacion_Scrum.pdf` adjunto en este repositorio.
+
+
 
