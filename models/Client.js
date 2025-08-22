@@ -11,6 +11,7 @@ class Client {
       this.empresa = empresa || null;
       this.createdAt = new Date();
     }
+    
   }
   
   module.exports = Client;
