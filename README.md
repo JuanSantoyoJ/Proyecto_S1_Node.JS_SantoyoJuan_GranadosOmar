@@ -118,4 +118,61 @@ Este proyecto fue desarrollado por:
 *Desarrollado entre el 21 y el 27 de agosto.*
 
 
+``` mermaid
+erDiagram
+    CLIENTE ||--o{ PROPUESTA : "hace"
+    CLIENTE ||--o{ PROYECTO : "contrata"
+    PROPUESTA ||--|| PROYECTO : "genera"
+    PROYECTO ||--|| CONTRATO : "tiene"
+    PROYECTO ||--o{ ENTREGABLE : "contiene"
+    PROYECTO ||--o{ FINANZAS : "registra"
 
+    CLIENTE {
+        string idCliente
+        string nombre
+        string correo
+        string empresa
+    }
+
+    PROPUESTA {
+        string nombre
+        string idPropuesta
+        string descripcion
+        double precio
+        string plazo
+        string estado
+    }
+
+    PROYECTO {
+        string idProyecto
+        string nombre
+        string descripcion
+        string estado
+        date fechaInicio
+        date fechaFin
+        object avances
+    }
+
+    CONTRATO {
+        string idContrato
+        string condiciones
+        date fechaInicio
+        date fechaFin
+        double valorTotal
+    }
+
+    ENTREGABLE {
+        string idEntregable
+        string descripcion
+        date fechaLimite
+        string estado
+    }
+
+    FINANZAS {
+        string idMovimiento
+        string tipo
+        double monto
+        date fecha
+        string descripcion
+    }
+```
