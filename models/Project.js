@@ -1,4 +1,4 @@
-class Proyecto {
+class Project {
     constructor({ clienteId, propuestaId, nombre }) {
       this.clienteId = clienteId;
       this.propuestaId = propuestaId;
@@ -7,4 +7,4 @@ class Proyecto {
       this.createdAt = new Date();
     }
   }
-  module.exports = Proyecto;
+  module.exports = Project;

@@ -1,4 +1,4 @@
-class Transaccion {
+class Transaction {
     constructor({ proyectoId, tipo, monto, fecha }) {
       if (!["ingreso", "egreso"].includes(tipo)) throw new Error("Tipo inválido");
       this.proyectoId = proyectoId;
@@ -7,4 +7,4 @@ class Transaccion {
       this.fecha = fecha || new Date();
     }
   }
-  module.exports = Transaccion;
+  module.exports = Transaction;

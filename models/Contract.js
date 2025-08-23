@@ -1,4 +1,4 @@
-class Contrato {
+class Contract {
   constructor({ proyectoId, condiciones, fechaInicio, fechaFin, valor }) {
     this.proyectoId = proyectoId;
     this.condiciones = condiciones;
@@ -7,4 +7,4 @@ class Contrato {
     this.valor = valor;
   }
 }
-module.exports = Contrato;
+module.exports = Contract;

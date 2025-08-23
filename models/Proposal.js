@@ -1,4 +1,4 @@
-class Propuesta {
+class Proposal {
     constructor({ clienteId, descripcion, precio, plazo }) {
       if (!clienteId) throw new Error("Debe asociarse a un cliente");
       this.clienteId = clienteId;
@@ -9,4 +9,4 @@ class Propuesta {
       this.createdAt = new Date();
     }
   }
-  module.exports = Propuesta;
+  module.exports = Proposal;
