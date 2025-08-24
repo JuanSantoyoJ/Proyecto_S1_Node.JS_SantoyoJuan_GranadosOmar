@@ -160,6 +160,19 @@ Para instalar y ejecutar este proyecto localmente, sigue estos pasos:
 
 ## Documentación de SCRUM
 
+Este proyecto fue desarrollado siguiendo la metodología ágil SCRUM, implementando un enfoque iterativo e incremental para la gestión del proyecto. La documentación completa del proceso SCRUM incluye:
+
+- **Sprint Planning:** Planificación detallada de cada sprint con definición de objetivos, historias de usuario y criterios de aceptación
+- **Product Backlog:** Lista priorizada de todas las funcionalidades, mejoras y correcciones requeridas para el sistema
+- **Sprint Backlog:** Elementos seleccionados del Product Backlog para cada sprint específico
+- **Daily Standups:** Registro de reuniones diarias para seguimiento del progreso y identificación de impedimentos
+- **Sprint Review:** Evaluación de los entregables completados al final de cada sprint
+- **Sprint Retrospective:** Análisis del proceso y identificación de mejoras para futuros sprints
+- **Burndown Charts:** Gráficos de seguimiento del progreso durante cada sprint
+- **Definition of Done:** Criterios claros que definen cuándo una tarea se considera completamente terminada
+
+La implementación de SCRUM nos permitió mantener un desarrollo organizado, con entregas incrementales de valor y una comunicación efectiva entre los miembros del equipo, asegurando la calidad del producto final y el cumplimiento de los plazos establecidos.
+
 **[Documentación de SCRUM](./SCRUM/Proyecto_NodeS1_SantoyoJuan_OmarGranados.docx.pdf)**
 
 ---
