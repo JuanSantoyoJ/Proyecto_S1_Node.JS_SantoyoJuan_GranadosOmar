@@ -5,12 +5,12 @@ class ClientService {
   static async create(data) {
     const db = await connectDB();
     const client = new Client(data);
-    await db.collection("clientes").insertOne(client);
+    await db.collection("clients").insertOne(client);
     return client;
   }
   static async list() {
     const db = await connectDB();
-    return db.collection("clientes").find().toArray();
+    return db.collection("clients").find().toArray();
   }
 }
 module.exports = ClientService;

@@ -19,8 +19,8 @@ async function testDB() {
 testDB();
 
 const prompt = require("prompt-sync")();
-const { crearCliente, listarClientes } = require("./views/ClientView.js");
-const { crearPropuesta, aceptarPropuesta } = require("./views/PropuestaView.js");
+const { createClient, listClients } = require("./views/ClientView.js");
+const { createProposal, acceptProposal } = require("./views/ProposalView.js");
 
 async function main() {
   console.log(`
@@ -33,10 +33,10 @@ async function main() {
 
   const opcion = prompt("Selecciona una opción: ");
 
-  if (opcion === "1") await crearCliente();
-  if (opcion === "2") await listarClientes();
-  if (opcion === "3") await crearPropuesta();
-  if (opcion === "4") await aceptarPropuesta();
+  if (opcion === "1") await createClient();
+  if (opcion === "2") await listClients();
+  if (opcion === "3") await createProposal();
+  if (opcion === "4") await acceptProposal();
   if (opcion === "5") process.exit(0);
 
   main(); // vuelve al menú
