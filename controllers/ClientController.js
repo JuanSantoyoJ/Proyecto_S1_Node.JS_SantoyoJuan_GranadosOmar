@@ -12,5 +12,10 @@ class ClientService {
     const db = await connectDB();
     return db.collection("clients").find().toArray();
   }
+  static async update(clientId, data) {
+    const db = await connectDB();
+    await db.collection("clients").updateOne({ _id: clientId }, { $set: data });
+    return db.collection("clients").findOne({ _id: clientId });
+  }
 }
 module.exports = ClientService;
