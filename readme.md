@@ -158,6 +158,12 @@ Para instalar y ejecutar este proyecto localmente, sigue estos pasos:
 
 ---
 
+## Documentación de SCRUM
+
+**[Documentación de SCRUM](./SCRUM/Proyecto_NodeS1_SantoyoJuan_OmarGranados.docx.pdf)**
+
+---
+
 <h1 align="center";>
 
 # Planificación y Diseño de la Base de Datos
