@@ -185,136 +185,285 @@ La implementación de SCRUM nos permitió mantener un desarrollo organizado, con
 
 ## Construcción del Modelo Conceptual
 
-El modelo conceptual proporciona una descripción de alto nivel de las necesidades de información del sistema. Representa los conceptos principales (entidades) y las relaciones entre ellos.
+El modelo conceptual proporciona una descripción de alto nivel de las necesidades de información del sistema. Representa los conceptos principales (entidades) y las relaciones entre ellos, sin considerar aspectos técnicos de implementación.
 
-**Entidades y Atributos**
+### **Entidades y Atributos**
 
 1.  **Cliente:** Representa a un cliente del freelancer.
-    -   `idCliente`: Identificador único.
-    -   `nombre`: Nombre del cliente.
-    -   `correo`: Correo electrónico.
-    -   `empresa`: Empresa a la que pertenece.
+    -   `nombre`: Nombre completo del cliente
+    -   `correo`: Correo electrónico de contacto
+    -   `empresa`: Empresa a la que pertenece (opcional)
+    -   `telefono`: Número de contacto (opcional)
 
-2.  **Propuesta:** Documento de oferta para un posible proyecto.
-    -   `idPropuesta`: Identificador único.
-    -   `nombre`: Título de la propuesta.
-    -   `descripcion`: Detalles de la propuesta.
-    -   `precio`: Costo estimado.
-    -   `plazo`: Tiempo de entrega estimado.
-    -   `estado`: (Ej: 'Enviada', 'Aceptada', 'Rechazada').
+2.  **Propuesta:** Documento de oferta comercial para un posible proyecto.
+    -   `nombre`: Título descriptivo de la propuesta
+    -   `descripcion`: Detalles técnicos y alcance
+    -   `precio`: Costo estimado del servicio
+    -   `plazo`: Tiempo estimado de entrega
+    -   `estado`: Estado actual (pendiente, aceptada, rechazada)
 
-3.  **Proyecto:** Un trabajo contratado por un cliente.
-    -   `idProyecto`: Identificador único.
-    -   `nombre`: Nombre del proyecto.
-    -   `descripcion`: Detalles del proyecto.
-    -   `estado`: (Ej: 'Activo', 'Completado', 'Pausado').
-    -   `fechaInicio`, `fechaFin`: Fechas del proyecto.
+3.  **Proyecto:** Trabajo contratado y en desarrollo.
+    -   `nombre`: Nombre del proyecto
+    -   `descripcion`: Descripción detallada
+    -   `estado`: Estado actual (activo, pausado, finalizado, cancelado)
+    -   `fechaInicio`: Fecha de inicio del proyecto
+    -   `fechaFin`: Fecha de finalización (opcional)
 
-4.  **Contrato:** Acuerdo formal que vincula un proyecto.
-    -   `idContrato`: Identificador único.
-    -   `condiciones`: Términos y condiciones.
-    -   `valorTotal`: Monto final acordado.
+4.  **Contrato:** Acuerdo formal que rige el proyecto.
+    -   `condiciones`: Términos y condiciones del acuerdo
+    -   `fechaInicio`: Fecha de inicio contractual
+    -   `fechaFin`: Fecha de finalización contractual
+    -   `valor`: Monto total acordado
 
-5.  **Entregable:** Un hito o producto específico dentro de un proyecto.
-    -   `idEntregable`: Identificador único.
-    -   `descripcion`: Detalles del entregable.
-    -   `fechaLimite`: Fecha de entrega.
-    -   `estado`: (Ej: 'Pendiente', 'En revisión', 'Aprobado').
+5.  **Entregable:** Producto o hito específico dentro de un proyecto.
+    -   `titulo`: Nombre del entregable
+    -   `descripcion`: Descripción detallada
+    -   `fechaLimite`: Fecha límite de entrega
+    -   `estado`: Estado actual (pendiente, entregado, aprobado, rechazado)
 
-6.  **Transacción:** Un movimiento financiero asociado a un proyecto.
-    -   `idMovimiento`: Identificador único.
-    -   `tipo`: (Ej: 'Ingreso', 'Gasto').
-    -   `monto`: Cantidad de dinero.
-    -   `fecha`: Fecha de la transacción.
-    -   `descripcion`: Detalles del movimiento.
+6.  **Transacción:** Movimiento financiero asociado al proyecto.
+    -   `tipo`: Tipo de movimiento (ingreso, egreso)
+    -   `monto`: Cantidad monetaria
+    -   `fecha`: Fecha de la transacción
+    -   `descripcion`: Detalle del movimiento
 
-**Relaciones y Cardinalidades**
+### **Relaciones y Cardinalidades**
 
--   Un `Cliente` puede tener muchas `Propuestas` (1:N).
--   Un `Cliente` puede tener muchos `Proyectos` (1:N).
--   Una `Propuesta` aceptada genera un `Proyecto` (1:1).
--   Un `Proyecto` tiene un `Contrato` (1:1).
--   Un `Proyecto` se compone de muchos `Entregables` (1:N).
--   Un `Proyecto` tiene muchas `Transacciones` financieras (1:N).
+-   Un `Cliente` puede solicitar muchas `Propuestas` (1:N)
+-   Un `Cliente` puede contratar muchos `Proyectos` (1:N)
+-   Una `Propuesta` puede generar máximo un `Proyecto` (1:1)
+-   Un `Proyecto` se formaliza con un `Contrato` (1:1)
+-   Un `Proyecto` se compone de muchos `Entregables` (1:N)
+-   Un `Proyecto` registra muchas `Transacciones` (1:N)
 
-**Diagrama Conceptual (ER)**
+### **Diagrama Conceptual (Entidad-Relación)**
 
 ```mermaid
 erDiagram
-    CLIENTE ||--o{ PROPUESTA : "solicita"
-    CLIENTE ||--o{ PROYECTO : "contrata"
-    PROPUESTA ||--|| PROYECTO : "genera"
-    PROYECTO ||--|| CONTRATO : "se formaliza con"
-    PROYECTO ||--o{ ENTREGABLE : "contiene"
-    PROYECTO ||--o{ TRANSACCION : "registra"
-
     CLIENTE {
-        string idCliente PK
         string nombre
         string correo
         string empresa
+        string telefono
     }
+    
     PROPUESTA {
-        string idPropuesta PK
-        string idCliente FK
         string nombre
         string descripcion
-        double precio
+        decimal precio
+        string plazo
         string estado
     }
+    
     PROYECTO {
-        string idProyecto PK
-        string idCliente FK
-        string idPropuesta FK
         string nombre
         string descripcion
         string estado
+        date fechaInicio
+        date fechaFin
     }
+    
     CONTRATO {
-        string idContrato PK
-        string idProyecto FK
-        string condiciones
-        double valorTotal
+        text condiciones
+        date fechaInicio
+        date fechaFin
+        decimal valor
     }
+    
     ENTREGABLE {
-        string idEntregable PK
-        string idProyecto FK
-        string descripcion
+        string titulo
+        text descripcion
+        date fechaLimite
         string estado
     }
+    
     TRANSACCION {
-        string idMovimiento PK
-        string idProyecto FK
         string tipo
-        double monto
-        string descripcion
+        decimal monto
+        date fecha
+        text descripcion
     }
+
+    CLIENTE ||--o{ PROPUESTA : solicita
+    CLIENTE ||--o{ PROYECTO : contrata
+    PROPUESTA ||--o| PROYECTO : genera
+    PROYECTO ||--|| CONTRATO : "se formaliza con"
+    PROYECTO ||--o{ ENTREGABLE : contiene
+    PROYECTO ||--o{ TRANSACCION : registra
 ```
 
-## Construcción del Modelo Lógico (Modelado NoSQL)
+## Construcción del Modelo Lógico (Modelado NoSQL - MongoDB)
 
 En esta fase, se traduce el modelo conceptual a una estructura de colecciones y documentos para MongoDB. Las decisiones clave giran en torno a si usar **referencias** (linking) o **documentos embebidos** (embedding).
 
-**Estrategia de Modelado**
+### **Estrategia de Modelado**
 
-Se optará por un **modelo híbrido**, favoreciendo las **referencias** para las entidades principales para mantener la consistencia y evitar la duplicación masiva de datos. Los datos que son intrínsecos a una entidad y no muy extensos se pueden embeber.
+Se optó por un **modelo híbrido**, favoreciendo las **referencias** para las entidades principales para mantener la consistencia y evitar la duplicación masiva de datos.
 
--   **Referencias (Linking):** Se usará para relaciones 1:N donde las entidades "N" pueden crecer indefinidamente o necesitan ser consultadas de forma independiente. Por ejemplo, la relación entre `Cliente` y `Proyecto`. Un cliente puede tener muchos proyectos, y queremos poder listar todos los proyectos sin necesidad de cargar la información completa de cada cliente. Se almacenará el `_id` del cliente dentro de cada documento de proyecto.
-    -   **Ventajas:** Datos consistentes, menor duplicación, documentos más pequeños y eficientes.
-    -   **Desventajas:** Requiere una consulta adicional (`$lookup` o una segunda query) para obtener los datos relacionados.
+#### **Referencias (Linking):**
+Se usará para relaciones 1:N donde las entidades "N" pueden crecer indefinidamente o necesitan ser consultadas de forma independiente.
 
--   **Embebido (Embedding):** Se podría usar para relaciones 1:1 o 1:N con un número limitado y pequeño de sub-documentos. Por ejemplo, si un proyecto tuviera un conjunto pequeño y fijo de "tags" o "categorías", podrían ser embebidos. En nuestro caso, la mayoría de las relaciones son con entidades que pueden crecer, por lo que se priorizarán las referencias. La relación `Proyecto` -> `Contrato` es 1:1 y podría ser un candidato para embeber el contrato dentro del proyecto, pero separarlos como colecciones distintas ofrece más flexibilidad si el contrato evoluciona.
+**Ventajas:**
+- Datos consistentes y normalizados
+- Menor duplicación de información
+- Documentos más pequeños y eficientes
+- Facilita las actualizaciones
 
-**Colecciones Definidas**
+**Desventajas:**
+- Requiere consultas adicionales (`$lookup`) para obtener datos relacionados
+- Ligeramente más complejo en consultas
 
-1.  `clients`: Almacena los documentos de los clientes.
-2.  `proposals`: Almacena las propuestas, con una referencia al `_id` del cliente.
-3.  `projects`: Almacena los proyectos, con referencias al `_id` del cliente y al `_id` de la propuesta original.
-4.  `contracts`: Almacena los contratos, con una referencia al `_id` del proyecto.
-5.  `deliverables`: Almacena los entregables, con una referencia al `_id` del proyecto.
-6.  `transactions`: Almacena los movimientos financieros, con una referencia al `_id` del proyecto.
+#### **Documentos Embebidos (Embedding):**
+Se consideró para relaciones 1:1 o datos intrínsecos pequeños, pero se priorizaron las referencias para mayor flexibilidad.
 
-Esta estructura basada en referencias es análoga a tener tablas separadas en SQL con claves foráneas, lo que garantiza que cada pieza de información (como los datos de un cliente) se almacena una sola vez (Single Source of Truth).
+### **Colecciones y Estructura de Documentos**
+
+#### **1. Colección `clients`**
+```javascript
+{
+  _id: ObjectId,
+  name: String,           // Nombre del cliente
+  email: String,          // Correo electrónico (único)
+  company: String,        // Empresa (opcional)
+  phone: String,          // Teléfono (opcional)
+  createdAt: Date         // Fecha de registro
+}
+```
+
+#### **2. Colección `proposals`**
+```javascript
+{
+  _id: ObjectId,
+  clientId: ObjectId,     // Referencia a clients._id
+  name: String,           // Título de la propuesta
+  description: String,    // Descripción detallada
+  price: Number,          // Precio propuesto
+  deadline_estimate: String, // Estimación de tiempo
+  status: String,         // 'pending', 'accepted', 'rejected'
+  createdAt: Date         // Fecha de creación
+}
+```
+
+#### **3. Colección `projects`**
+```javascript
+{
+  _id: ObjectId,
+  clientId: ObjectId,     // Referencia a clients._id
+  proposalId: ObjectId,   // Referencia a proposals._id
+  name: String,           // Nombre del proyecto
+  description: String,    // Descripción del proyecto
+  status: String,         // 'active', 'paused', 'completed', 'cancelled'
+  progress_log: [         // Array embebido para el log de progreso
+    {
+      date: Date,
+      note: String
+    }
+  ],
+  startDate: Date,        // Fecha de inicio
+  endDate: Date,          // Fecha de finalización (opcional)
+  createdAt: Date         // Fecha de creación
+}
+```
+
+#### **4. Colección `contracts`**
+```javascript
+{
+  _id: ObjectId,
+  projectId: ObjectId,    // Referencia a projects._id
+  terms: String,          // Términos y condiciones
+  totalValue: Number,     // Valor total del contrato
+  startDate: Date,        // Fecha de inicio contractual
+  endDate: Date,          // Fecha de finalización contractual
+  signedAt: Date,         // Fecha de firma
+  createdAt: Date         // Fecha de creación
+}
+```
+
+#### **5. Colección `deliverables`**
+```javascript
+{
+  _id: ObjectId,
+  projectId: ObjectId,    // Referencia a projects._id
+  name: String,           // Nombre del entregable
+  description: String,    // Descripción del entregable
+  deadline: Date,         // Fecha límite de entrega
+  status: String,         // 'pending', 'delivered', 'approved', 'rejected'
+  createdAt: Date         // Fecha de creación
+}
+```
+
+#### **6. Colección `transactions`**
+```javascript
+{
+  _id: ObjectId,
+  projectId: ObjectId,    // Referencia a projects._id
+  type: String,           // 'income', 'expense'
+  amount: Number,         // Monto (siempre positivo)
+  description: String,    // Descripción del movimiento
+  date: Date,             // Fecha de la transacción
+  createdAt: Date         // Fecha de registro
+}
+```
+
+### **Diagrama del Modelo Lógico**
+
+```mermaid
+graph TB
+    subgraph "Colecciones MongoDB"
+        A[clients]
+        B[proposals]
+        C[projects]
+        D[contracts]
+        E[deliverables]
+        F[transactions]
+    end
+    
+    subgraph "Estructura de Documentos"
+        A1["clients {<br/>_id: ObjectId<br/>name: String<br/>email: String<br/>company: String<br/>phone: String<br/>createdAt: Date<br/>}"]
+        
+        B1["proposals {<br/>_id: ObjectId<br/>clientId: ObjectId ⟶<br/>name: String<br/>description: String<br/>price: Number<br/>deadline_estimate: String<br/>status: String<br/>createdAt: Date<br/>}"]
+        
+        C1["projects {<br/>_id: ObjectId<br/>clientId: ObjectId ⟶<br/>proposalId: ObjectId ⟶<br/>name: String<br/>description: String<br/>status: String<br/>progress_log: Array<br/>startDate: Date<br/>endDate: Date<br/>createdAt: Date<br/>}"]
+        
+        D1["contracts {<br/>_id: ObjectId<br/>projectId: ObjectId ⟶<br/>terms: String<br/>totalValue: Number<br/>startDate: Date<br/>endDate: Date<br/>signedAt: Date<br/>createdAt: Date<br/>}"]
+        
+        E1["deliverables {<br/>_id: ObjectId<br/>projectId: ObjectId ⟶<br/>name: String<br/>description: String<br/>deadline: Date<br/>status: String<br/>createdAt: Date<br/>}"]
+        
+        F1["transactions {<br/>_id: ObjectId<br/>projectId: ObjectId ⟶<br/>type: String<br/>amount: Number<br/>description: String<br/>date: Date<br/>createdAt: Date<br/>}"]
+    end
+    
+    A --> A1
+    B --> B1
+    C --> C1
+    D --> D1
+    E --> E1
+    F --> F1
+    
+    %% Referencias entre colecciones
+    A1 -.->|"clientId"| B1
+    A1 -.->|"clientId"| C1
+    B1 -.->|"proposalId"| C1
+    C1 -.->|"projectId"| D1
+    C1 -.->|"projectId"| E1
+    C1 -.->|"projectId"| F1
+    
+    style A1 fill:#e1f5fe
+    style B1 fill:#f3e5f5
+    style C1 fill:#e8f5e8
+    style D1 fill:#fff3e0
+    style E1 fill:#fce4ec
+    style F1 fill:#f1f8e9
+```
+
+### **Decisiones de Diseño**
+
+1. **Single Source of Truth**: Cada entidad se almacena una sola vez, evitando duplicación
+2. **Referencias explícitas**: Uso de ObjectId para mantener relaciones claras
+3. **Flexibilidad**: Estructura que permite evolución sin reestructuración masiva
+4. **Eficiencia**: Balance entre consultas simples y complejidad de joins
+5. **Auditoria**: Campo `createdAt` en todas las colecciones para trazabilidad
+
+Esta estructura basada en referencias es análoga a tener tablas separadas en SQL con claves foráneas, garantizando que cada pieza de información se almacena una sola vez.
 
 ## Construcción del Modelo Físico
 
