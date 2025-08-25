@@ -39,9 +39,9 @@ async function main() {
   1. Crear cliente
   2. Listar clientes
   3. Actualizar cliente
-  3. Crear propuesta
-  4. Aceptar propuesta
-  5. Salir
+  4. Crear propuesta
+  5. Aceptar propuesta
+  0. Salir
     `);
 
     const opcion = prompt("Selecciona una opción: ");
@@ -50,6 +50,9 @@ async function main() {
       if (opcion === "1") await createClient();
       if (opcion === "2") await listClients();
       if (opcion === "3") await updateClient();
+      if (opcion === "4") await createProposal();
+      if (opcion === "5") await acceptProposal();
+      if (opcion === "0") 
       console.log("👋 ¡Hasta luego!");
       await disconnect();
       process.exit(0);
