@@ -24,12 +24,13 @@ class ClientService {
   }
   static async list() {
     const db = await connectDB();
-    return db.collection("clients").find().toArray();
+    return db.collection("cliente").find().toArray();
   }
   static async update(clientId, data) {
     const db = await connectDB();
-    await db.collection("clients").updateOne({ _id: clientId }, { $set: data });
-    return db.collection("clients").findOne({ _id: clientId });
+    const idNum = typeof clientId === 'string' ? parseInt(clientId, 10) : clientId;
+    await db.collection("cliente").updateOne({ id: idNum }, { $set: data });
+    return db.collection("cliente").findOne({ id: idNum });
   }
 }
 module.exports = ClientService;
