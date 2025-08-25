@@ -8,80 +8,31 @@
 */
 
 // --- Seleccionar la Base de Datos ---
-use('GestorFreelanceDB');
+use('Proyecto_NodeJS');
 
 // --- Creación de Colecciones con Validación de Esquema ---
 
 // 1. Colección para el perfil del Freelancer (Usuario de la App)
 // Esta colección contendrá un único documento con la información del usuario.
-db.createCollection('user_profile', {
-  validator: {
-    $jsonSchema: {
-      bsonType: 'object',
-      title: 'User Profile Validation',
-      required: ['name', 'email', 'title'],
-      properties: {
-        name: {
-          bsonType: 'string',
-          description: 'El nombre completo del freelancer es requerido.'
-        },
-        email: {
-          bsonType: 'string',
-          description: 'El email profesional es requerido.'
-        },
-        title: {
-          bsonType: 'string',
-          description: 'El título o rol profesional es requerido (ej: Desarrollador Full-Stack).'
-        },
-        address: {
-          bsonType: 'string',
-          description: 'Dirección para facturación.'
-        },
-        taxId: {
-          bsonType: 'string',
-          description: 'Número de identificación fiscal.'
-        },
-        bankDetails: {
-          bsonType: 'object',
-          properties: {
-            bankName: { bsonType: 'string' },
-            accountNumber: { bsonType: 'string' },
-            swiftCode: { bsonType: 'string' }
-          }
-        }
-      }
-    }
-  }
-});
 
 // 2. Colección de Clientes
-db.createCollection('clients', {
+db.createCollection('cliente', {
   validator: {
     $jsonSchema: {
       bsonType: 'object',
-      title: 'Client Validation',
-      required: ['name', 'email', 'createdAt'],
+      required: ['name',"id", 'email', 'createdAt'],
       properties: {
-        name: {
-          bsonType: 'string',
-          description: 'El nombre del cliente es requerido.'
+        name:{
+          bsonType:"string"
         },
-        email: {
-          bsonType: 'string',
-          description: 'El email del cliente es requerido y debe ser único.'
-          // En la lógica de la aplicación se debe asegurar la unicidad.
+        id:{
+          bsonType:["string","number"]
         },
-        company: {
-          bsonType: 'string',
-          description: 'Empresa del cliente (opcional).'
+        email:{
+          bsonType:"string"
         },
-        phone: {
-          bsonType: 'string',
-          description: 'Teléfono de contacto (opcional).'
-        },
-        createdAt: {
-          bsonType: 'date',
-          description: 'Fecha de registro del cliente.'
+        createdAT:{
+          bsonType:"date"
         }
       }
     }
@@ -89,40 +40,26 @@ db.createCollection('clients', {
 });
 
 // 3. Colección de Propuestas
-db.createCollection('proposals', {
+db.createCollection('propuesta', {
   validator: {
     $jsonSchema: {
       bsonType: 'object',
-      title: 'Proposal Validation',
-      required: ['clientId', 'name', 'price', 'status', 'createdAt'],
+      required: ['nombre', 'precio', 'status', 'createdAt'],
       properties: {
-        clientId: {
-          bsonType: 'objectId',
-          description: 'Referencia al _id del cliente. Es requerido.'
+        nombre: {
+          bsonType: 'string'
         },
-        name: {
-          bsonType: 'string',
-          description: 'Título de la propuesta es requerido.'
+        descripcion: {
+          bsonType: 'string'
         },
-        description: {
-          bsonType: 'string',
-          description: 'Descripción detallada de la oferta.'
-        },
-        price: {
-          bsonType: 'number',
-          description: 'Costo del servicio propuesto.'
-        },
-        deadline_estimate: {
-          bsonType: 'string',
-          description: 'Tiempo estimado de entrega (ej: "2 semanas").'
+        precio: {
+          bsonType: ['number',"int"]
         },
         status: {
-          enum: ['pending', 'accepted', 'rejected'],
-          description: 'El estado solo puede ser uno de los valores del enum.'
+          enum: ['pendiente', 'aceptado', 'rechazado']
         },
         createdAt: {
-          bsonType: 'date',
-          description: 'Fecha de creación de la propuesta.'
+          bsonType: 'date'
         }
       }
     }
@@ -130,22 +67,17 @@ db.createCollection('proposals', {
 });
 
 // 4. Colección de Proyectos
-db.createCollection('projects', {
+db.createCollection('proyecto', {
   validator: {
     $jsonSchema: {
       bsonType: 'object',
-      title: 'Project Validation',
-      required: ['clientId', 'proposalId', 'name', 'status', 'startDate'],
+      required: ['clienteId','nombre', 'status', 'fechaInicio'],
       properties: {
         clientId: {
           bsonType: 'objectId',
           description: 'Referencia al cliente.'
         },
-        proposalId: {
-          bsonType: 'objectId',
-          description: 'Referencia a la propuesta que originó el proyecto.'
-        },
-        name: {
+        nombre: {
           bsonType: 'string',
           description: 'Nombre del proyecto.'
         },
@@ -157,7 +89,7 @@ db.createCollection('projects', {
           enum: ['active', 'paused', 'completed', 'cancelled'],
           description: 'Estado actual del proyecto.'
         },
-        progress_log: {
+        progreso: {
           bsonType: 'array',
           items: {
             bsonType: 'object',
@@ -168,7 +100,7 @@ db.createCollection('projects', {
             }
           }
         },
-        startDate: {
+        fechaInicio: {
           bsonType: 'date'
         },
         endDate: {
@@ -180,32 +112,28 @@ db.createCollection('projects', {
 });
 
 // 5. Colección de Contratos
-db.createCollection('contracts', {
+db.createCollection('contrato', {
   validator: {
     $jsonSchema: {
       bsonType: 'object',
-      title: 'Contract Validation',
-      required: ['projectId', 'totalValue', 'startDate'],
+      required: ['proyectoId', 'totalValue', 'fechaInicio'],
       properties: {
         projectId: {
-          bsonType: 'objectId',
-          description: 'Referencia al proyecto.'
+          bsonType: 'objectId'
         },
-        terms: {
-          bsonType: 'string',
-          description: 'Términos y condiciones del contrato.'
+        terminos: {
+          bsonType: 'string'
         },
-        totalValue: {
-          bsonType: 'number',
-          description: 'Valor total acordado.'
+        valor: {
+          bsonType: ['number',"int"]
         },
-        startDate: {
+        fechaInicio: {
           bsonType: 'date'
         },
-        endDate: {
+        fechaFin: {
           bsonType: 'date'
         },
-        signedAt: {
+        fechaAsignada: {
           bsonType: 'date'
         }
       }
@@ -214,31 +142,27 @@ db.createCollection('contracts', {
 });
 
 // 6. Colección de Entregables
-db.createCollection('deliverables', {
+db.createCollection('entregable', {
   validator: {
     $jsonSchema: {
       bsonType: 'object',
-      title: 'Deliverable Validation',
-      required: ['projectId', 'name', 'deadline', 'status'],
+      required: ['proyectoId', 'nombre', 'fechaFin', 'status'],
       properties: {
         projectId: {
           bsonType: 'objectId',
           description: 'Referencia al proyecto.'
         },
-        name: {
-          bsonType: 'string',
-          description: 'Nombre del entregable.'
+        nombre: {
+          bsonType: 'string'
         },
-        description: {
+        descripcion: {
           bsonType: 'string'
         },
         deadline: {
-          bsonType: 'date',
-          description: 'Fecha límite de entrega.'
+          bsonType: 'date'
         },
         status: {
-          enum: ['pending', 'delivered', 'approved', 'rejected'],
-          description: 'Estado del entregable.'
+          enum: ['pendiente', 'finalizado']
         }
       }
     }
@@ -246,37 +170,30 @@ db.createCollection('deliverables', {
 });
 
 // 7. Colección de Transacciones Financieras
-db.createCollection('transactions', {
+db.createCollection('transaccion', {
   validator: {
     $jsonSchema: {
       bsonType: 'object',
-      title: 'Transaction Validation',
-      required: ['projectId', 'type', 'amount', 'date'],
+      required: ['proyectoId', 'tipo', 'cantidad', 'fecha'],
       properties: {
-        projectId: {
-          bsonType: 'objectId',
-          description: 'Referencia al proyecto asociado.'
+        proyectoId: {
+          bsonType: 'objectId'
         },
-        type: {
-          enum: ['income', 'expense'],
-          description: 'Tipo de transacción: ingreso o gasto.'
+        tipo: {
+          enum: ['ingreso', 'gasto']
         },
-        amount: {
-          bsonType: 'number',
-          minimum: 0,
-          description: 'Monto de la transacción (siempre positivo).'
+        cantidad: {
+          bsonType: ['number',"int"],
+          minimum: 0
         },
-        description: {
-          bsonType: 'string',
-          description: 'Descripción del movimiento.'
+        descripcion: {
+          bsonType: 'string'
         },
-        date: {
-          bsonType: 'date',
-          description: 'Fecha de la transacción.'
+        fecha: {
+          bsonType: 'date'
         }
       }
     }
   }
 });
 
-print("Base de datos 'GestorFreelanceDB' y colecciones creadas con éxito.");

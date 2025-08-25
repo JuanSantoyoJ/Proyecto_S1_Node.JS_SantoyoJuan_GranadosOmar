@@ -261,6 +261,7 @@ erDiagram
         string estado
         date fechaInicio
         date fechaFin
+        array avances
     }
     
     CONTRATO {
