@@ -1,5 +1,5 @@
 const inquirer = require("inquirer");
-const ProposalService = require("../controllers/ProposalController.js");
+const ProposalService = require("../controllers/propuestaController.js");
 
 async function createProposal() {
   const data = await inquirer.prompt([

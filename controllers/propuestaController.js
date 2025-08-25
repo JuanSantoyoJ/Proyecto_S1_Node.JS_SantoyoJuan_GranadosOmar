@@ -1,6 +1,6 @@
 const { connectDB } = require("../db.js");
-const Proposal = require("../models/Proposal.js");
-const Project = require("../models/Project.js");
+const Proposal = require("../models/propuesta.js");
+const Project = require("../models/proyecto.js");
 
 class ProposalService {
   static async create(data) {

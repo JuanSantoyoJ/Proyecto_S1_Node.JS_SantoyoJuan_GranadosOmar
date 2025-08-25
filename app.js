@@ -1,4 +1,5 @@
 require('dotenv').config();
+const { update } = require('./controllers/clienteController.js');
 const { connectDB, disconnect } = require("./db");
 
 async function testDB() {
@@ -17,13 +18,13 @@ async function testDB() {
 }
 
 const prompt = require("prompt-sync")();
-const { createClient, listClients } = require("./views/ClientView.js");
-const { createProposal, acceptProposal } = require("./views/ProposalView.js");
+const { createClient, listClients, updateClient } = require("./views/clienteView.js");
+const { createProposal, acceptProposal } = require("./views/propuestaView.js");
 
 async function main() {
   // Probar conexión DB al inicio
   await testDB();
-  
+
   // Función para manejar el cierre limpio de la aplicación
   process.on('SIGINT', async () => {
     console.log('\n👋 Cerrando aplicación...');
@@ -37,6 +38,7 @@ async function main() {
   === GESTOR DE PORTAFOLIO FREELANCE ===
   1. Crear cliente
   2. Listar clientes
+  3. Actualizar cliente
   3. Crear propuesta
   4. Aceptar propuesta
   5. Salir
@@ -47,21 +49,18 @@ async function main() {
     try {
       if (opcion === "1") await createClient();
       if (opcion === "2") await listClients();
-      if (opcion === "3") await createProposal();
-      if (opcion === "4") await acceptProposal();
-      if (opcion === "5") {
-        console.log("👋 ¡Hasta luego!");
-        await disconnect();
-        process.exit(0);
-      }
+      if (opcion === "3") await updateClient();
+      console.log("👋 ¡Hasta luego!");
+      await disconnect();
+      process.exit(0);
     } catch (error) {
-      console.error("❌ Error:", error.message);
-    }
-
-    showMenu(); // vuelve al menú
+    console.error("❌ Error:", error.message);
   }
 
-  showMenu();
+  showMenu(); // vuelve al menú
+}
+
+showMenu();
 }
 
 main().catch(async (error) => {

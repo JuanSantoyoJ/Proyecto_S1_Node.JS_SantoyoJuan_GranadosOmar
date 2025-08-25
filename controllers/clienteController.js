@@ -1,5 +1,5 @@
 const { connectDB } = require("../db.js");
-const Client = require("../models/Client.js");
+const Client = require("../models/cliente.js");
 
 class ClientService {
   static async create(data) {
