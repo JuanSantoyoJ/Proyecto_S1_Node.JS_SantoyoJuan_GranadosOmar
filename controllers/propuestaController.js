@@ -1,33 +1,46 @@
 const { connectDB } = require("../db.js");
-const Proposal = require("../models/Propuesta.js");
-const Project = require("../models/Proyecto.js");
+const Propuesta = require("../models/Propuesta.js");
 
-class ProposalService {
+class PropuestaService {
   static async create(data) {
     const db = await connectDB();
-    const proposal = new Proposal(data);
-    await db.collection("proposals").insertOne(proposal);
-    return proposal;
+
+    // Buscar último id
+    const ultimo = await db.collection("propuesta").find().sort({ id: -1 }).limit(1).toArray();
+
+    let nextId = 1;
+    if (ultimo.length > 0) {
+      nextId = ultimo[0].id + 1;
+    }
+
+    const propuesta = new Propuesta({
+      id: nextId,
+      ...data
+    });
+
+    await db.collection("propuesta").insertOne(propuesta);
+    return propuesta;
   }
 
-  static async aceptar(proposalId) {
+  static async list() {
     const db = await connectDB();
-    const proposal = await db.collection("proposals").findOne({ _id: proposalId });
-    if (!proposal) throw new Error("Propuesta no encontrada");
+    return db.collection("propuesta").find().toArray();
+  }
 
-    await db.collection("proposals").updateOne(
-      { _id: proposalId },
-      { $set: { estado: "aceptada" } }
-    );
+  static async update(propuestaId, data) {
+    const db = await connectDB();
+    const idNum = typeof propuestaId === "string" ? parseInt(propuestaId, 10) : propuestaId;
 
-    // Crear proyecto automáticamente
-    const project = new Project({
-      clienteId: proposal.clienteId,
-      propuestaId: proposalId,
-      nombre: "Proyecto generado"
-    });
-    await db.collection("proyectos").insertOne(project);
-    return project;
+    await db.collection("propuesta").updateOne({ id: idNum }, { $set: data });
+    return db.collection("propuesta").findOne({ id: idNum });
+  }
+
+  static async delete(propuestaId) {
+    const db = await connectDB();
+    const idNum = typeof propuestaId === "string" ? parseInt(propuestaId, 10) : propuestaId;
+    await db.collection("propuesta").deleteOne({ id: idNum });
+    return { deletedId: idNum };
   }
 }
-module.exports = ProposalService;
+
+module.exports = PropuestaService;

@@ -16,7 +16,7 @@
 
 <h3 align="center";>
 
-**Omar Fernandez**
+**Omar Granados**
 
 </h3>
 
