@@ -6,9 +6,6 @@ async function testDB() {
     const db = await connectDB();
     console.log("✅ Conexión exitosa a la base de datos:", db.databaseName);
 
-    const collections = await db.listCollections().toArray();
-    console.log("Colecciones en la DB:", collections.map(c => c.name));
-
   } catch (error) {
     console.error("❌ Error de conexión:", error);
     process.exit(1); // Salir si no se puede conectar a la DB
@@ -51,10 +48,7 @@ async function main() {
       if (opcion === "3") await updateClient();
       if (opcion === "4") await deleteClient();
       if (opcion === "5") await acceptProposal();
-      if (opcion === "0") 
-      console.log("👋 ¡Hasta luego!");
-      await disconnect();
-      process.exit(0);
+      if (opcion === "0") process.exit(0);
     } catch (error) {
     console.error("❌ Error:", error.message);
   }

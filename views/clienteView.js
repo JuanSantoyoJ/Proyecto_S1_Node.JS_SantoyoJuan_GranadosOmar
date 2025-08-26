@@ -1,5 +1,5 @@
 const prompt = require("prompt-sync")(); // 👈 importante los paréntesis
-const ClientService = require("../controllers/ClienteController.js");
+const ClientService = require("../controllers/clienteController.js");
 
 async function createClient() {
   const { default: chalk } = await import("chalk");
