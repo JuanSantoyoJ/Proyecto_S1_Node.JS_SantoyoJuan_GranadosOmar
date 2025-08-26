@@ -32,5 +32,11 @@ class ClientService {
     await db.collection("cliente").updateOne({ id: idNum }, { $set: data });
     return db.collection("cliente").findOne({ id: idNum });
   }
+  static async delete(clientId) {
+    const db = await connectDB();
+    const idNum = typeof clientId === 'string' ? parseInt(clientId, 10) : clientId;
+    const result = await db.collection("cliente").deleteOne({ id: idNum });
+    return result.deletedCount > 0;
+  }
 }
 module.exports = ClientService;

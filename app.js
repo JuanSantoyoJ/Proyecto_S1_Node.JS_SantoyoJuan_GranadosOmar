@@ -18,7 +18,7 @@ async function testDB() {
 }
 
 const prompt = require("prompt-sync")();
-const { createClient, listClients, updateClient } = require("./views/clienteView.js");
+const { createClient, listClients, updateClient, deleteClient } = require("./views/clienteView.js");
 const { createProposal, acceptProposal } = require("./views/propuestaView.js");
 
 async function main() {

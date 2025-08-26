@@ -1,5 +1,5 @@
 const prompt = require("prompt-sync")(); // 👈 importante los paréntesis
-const ClientService = require("../controllers/clienteController.js");
+const ClientService = require("../controllers/ClienteController.js");
 
 async function createClient() {
   const { default: chalk } = await import("chalk");
@@ -52,4 +52,24 @@ async function updateClient() {
     console.log(chalk.red("❌ Error al actualizar cliente:"), error.message);
   }
 }
-module.exports = { createClient, listClients, updateClient };
+
+async function deleteClient() {
+  await listClients();
+  const { default: chalk } = await import("chalk");
+
+  const clientId = prompt("ID del cliente a eliminar: ");
+
+  try {
+    const success = await ClientService.delete(clientId);
+    if (success) {
+      console.log(chalk.green("✅ Cliente eliminado"));
+    } else {
+      console.log(chalk.yellow("⚠️ No se encontró el cliente con ese ID"));
+    }
+    console.log(chalk.blue("\nLista de clientes actualizada:\n"));
+    await listClients();
+  } catch (error) {
+    console.log(chalk.red("❌ Error al eliminar cliente:"), error.message);
+  }
+}
+module.exports = { createClient, listClients, updateClient, deleteClient };
