@@ -1,9 +1,13 @@
 const { connectDB } = require("../db.js");
 const Client = require("../models/Cliente.js");
+const { createClienteFactory } = require('../factory/ClienteFactory');
 
 class ClientService {
   static async create(data) {
     const db = await connectDB();
+
+    // Normalizar y validar datos con factory
+    const payload = createClienteFactory(data);
 
     // Buscar último id
     const ultimo = await db.collection("cliente").find().sort({ id: -1 }).limit(1).toArray();
@@ -15,7 +19,7 @@ class ClientService {
 
     const newClient = {
       id: nextId,
-      ...data,
+      ...payload,
       createdAt: new Date()
     };
 
