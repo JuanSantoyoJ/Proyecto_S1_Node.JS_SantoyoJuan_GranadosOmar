@@ -1,5 +1,4 @@
 require('dotenv').config();
-const { update } = require('./controllers/clienteController.js');
 const { connectDB, disconnect } = require("./db");
 
 async function testDB() {
@@ -39,7 +38,7 @@ async function main() {
   1. Crear cliente
   2. Listar clientes
   3. Actualizar cliente
-  4. Crear propuesta
+  4. Borrar cliente
   5. Aceptar propuesta
   0. Salir
     `);
@@ -50,7 +49,7 @@ async function main() {
       if (opcion === "1") await createClient();
       if (opcion === "2") await listClients();
       if (opcion === "3") await updateClient();
-      if (opcion === "4") await createProposal();
+      if (opcion === "4") await deleteClient();
       if (opcion === "5") await acceptProposal();
       if (opcion === "0") 
       console.log("👋 ¡Hasta luego!");
