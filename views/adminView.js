@@ -40,6 +40,14 @@ class AdminView {
     }
 
     if (op === "3") {
+      const lista = await UsuarioController.listAll();
+      console.table(lista.map(u => ({
+        _id: u._id.toString(),
+        nombre: u.nombre,
+        correo: u.correo,
+        rol: u.rol,
+        empresa: u.empresa || "-"
+      })));
       const id = prompt("ID de usuario a actualizar: ");
       const nombre = prompt("Nuevo nombre (enter = igual): ");
       const correo = prompt("Nuevo correo (enter = igual): ");
