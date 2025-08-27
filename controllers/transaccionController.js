@@ -1,37 +1,36 @@
-const { connectDB } = require("../db.js");
-const Transaccion = require("../models/Transaccion.js");
+const { ObjectId } = require("mongodb");
+const Transaccion = require("../models/Transaccion");
+const ProyectoController = require("./proyectoController");
 
-class TransaccionService {
-  static async create(data) {
-    const db = await connectDB();
-    const ultimo = await db.collection("transaccion").find().sort({ id: -1 }).limit(1).toArray();
+class TransaccionController {
+  /**
+   * Cliente: solo "ingreso"
+   * Admin: "ingreso" y "gasto"
+   */
+  static async create({ proyectoId, tipo, cantidad, descripcion, rolQuienCrea }) {
+    const pid = typeof proyectoId === "string" ? new ObjectId(proyectoId) : proyectoId;
+    const cant = Number(cantidad);
+    if (Number.isNaN(cant) || cant < 0) throw new Error("Cantidad inválida");
 
-    let nextId = 1;
-    if (ultimo.length > 0) nextId = ultimo[0].id + 1;
+    if (rolQuienCrea === "cliente" && tipo !== "ingreso") {
+      throw new Error("El cliente solo puede registrar ingresos");
+    }
+    if (!["ingreso", "gasto"].includes(tipo)) {
+      throw new Error("Tipo inválido (ingreso|gasto)");
+    }
 
-    const transaccion = new Transaccion({ id: nextId, ...data });
-    await db.collection("transaccion").insertOne(transaccion);
-    return transaccion;
-  }
+    // Validar que exista el proyecto
+    const proyecto = await ProyectoController.findById(pid);
+    if (!proyecto) throw new Error("Proyecto no encontrado");
 
-  static async list() {
-    const db = await connectDB();
-    return db.collection("transaccion").find().toArray();
-  }
-
-  static async update(transaccionId, data) {
-    const db = await connectDB();
-    const idNum = typeof transaccionId === "string" ? parseInt(transaccionId, 10) : transaccionId;
-    await db.collection("transaccion").updateOne({ id: idNum }, { $set: data });
-    return db.collection("transaccion").findOne({ id: idNum });
-  }
-
-  static async delete(transaccionId) {
-    const db = await connectDB();
-    const idNum = typeof transaccionId === "string" ? parseInt(transaccionId, 10) : transaccionId;
-    await db.collection("transaccion").deleteOne({ id: idNum });
-    return { deletedId: idNum };
+    return await Transaccion.create({
+      proyectoId: pid,
+      tipo,
+      cantidad: cant,
+      descripcion: descripcion || "",
+      fecha: new Date()
+    });
   }
 }
 
-module.exports = TransaccionService;
+module.exports = TransaccionController;

@@ -1,37 +1,24 @@
-const { connectDB } = require("../db.js");
-const Entregable = require("../models/Entregable.js");
+const { ObjectId } = require("mongodb");
+const Entregable = require("../models/Entregable");
 
-class EntregableService {
-  static async create(data) {
-    const db = await connectDB();
-    const ultimo = await db.collection("entregable").find().sort({ id: -1 }).limit(1).toArray();
+class EntregableController {
+  static async create({ proyectoId, nombre, descripcion, deadline }) {
+    const pid = typeof proyectoId === "string" ? new ObjectId(proyectoId) : proyectoId;
+    if (!nombre) throw new Error("Nombre de entregable requerido");
 
-    let nextId = 1;
-    if (ultimo.length > 0) nextId = ultimo[0].id + 1;
-
-    const entregable = new Entregable({ id: nextId, ...data });
-    await db.collection("entregable").insertOne(entregable);
-    return entregable;
+    return await Entregable.create({
+      proyectoId: pid,
+      nombre,
+      descripcion: descripcion || "",
+      deadline: deadline ? new Date(deadline) : new Date(),
+      status: "pendiente"
+    });
   }
 
-  static async list() {
-    const db = await connectDB();
-    return db.collection("entregable").find().toArray();
-  }
-
-  static async update(entregableId, data) {
-    const db = await connectDB();
-    const idNum = typeof entregableId === "string" ? parseInt(entregableId, 10) : entregableId;
-    await db.collection("entregable").updateOne({ id: idNum }, { $set: data });
-    return db.collection("entregable").findOne({ id: idNum });
-  }
-
-  static async delete(entregableId) {
-    const db = await connectDB();
-    const idNum = typeof entregableId === "string" ? parseInt(entregableId, 10) : entregableId;
-    await db.collection("entregable").deleteOne({ id: idNum });
-    return { deletedId: idNum };
+  static async listByProyecto(proyectoId) {
+    const pid = typeof proyectoId === "string" ? new ObjectId(proyectoId) : proyectoId;
+    return await Entregable.listByProyecto(pid);
   }
 }
 
-module.exports = EntregableService;
+module.exports = EntregableController;

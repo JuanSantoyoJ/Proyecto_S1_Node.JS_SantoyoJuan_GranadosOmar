@@ -1,17 +1,17 @@
-class Contrato {
-  constructor({ id, proyectoId, terminos, valor, fechaInicio, fechaFin, fechaAsignada }) {
-    if (!proyectoId) throw new Error("El proyectoId es requerido");
-    if (valor == null || typeof valor !== "number") throw new Error("El valor es requerido y debe ser numérico");
-    if (!fechaInicio) throw new Error("La fechaInicio es requerida");
+const { getDB } = require("../db");
 
-    this.id = id;
-    this.proyectoId = proyectoId;
-    this.terminos = terminos || "";
-    this.valor = valor;
-    this.fechaInicio = new Date(fechaInicio);
-    this.fechaFin = fechaFin ? new Date(fechaFin) : null;
-    this.fechaAsignada = fechaAsignada ? new Date(fechaAsignada) : null;
-    this.createdAt = new Date();
+class Contrato {
+  static col() {
+    return getDB().collection("contrato");
+  }
+
+  static async create(doc) {
+    const res = await this.col().insertOne(doc);
+    return await this.col().findOne({ _id: res.insertedId });
+  }
+
+  static async findByProyecto(proyectoId) {
+    return await this.col().findOne({ proyectoId });
   }
 }
 

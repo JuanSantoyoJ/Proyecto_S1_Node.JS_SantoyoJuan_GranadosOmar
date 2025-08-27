@@ -16,36 +16,47 @@ use('Proyecto_NodeJS');
 // Esta colección contendrá un único documento con la información del usuario.
 
 // 2. Colección de Clientes
-db.createCollection('cliente', {
+db.createCollection('usuarios', {
   validator: {
     $jsonSchema: {
       bsonType: 'object',
-      required: ['name',"id", 'email', 'createdAt'],
+      required: ['nombre', 'correo', 'contrasena', 'rol', 'createdAt'],
       properties: {
-        name:{
-          bsonType:"string"
+        nombre: {
+          bsonType: 'string'
         },
-        id:{
-          bsonType:["string","number"]
+        correo: {
+          bsonType: 'string'
         },
-        email:{
-          bsonType:"string"
+        contrasena: {
+          bsonType: 'string'
         },
-        createdAT:{
-          bsonType:"date"
+        empresa:{
+          bsonType: "string"
+        },
+        rol: {
+          enum: ['admin', 'cliente']
+        },
+        createdAt: {
+          bsonType: 'date'
         }
       }
     }
   }
 });
 
+
 // 3. Colección de Propuestas
 db.createCollection('propuesta', {
   validator: {
     $jsonSchema: {
       bsonType: 'object',
-      required: ['nombre', 'precio', 'status', 'createdAt'],
+      required: ['clienteId','nombre', 'precio', 'status', 'createdAt'],
       properties: {
+        clienteId: {
+          bsonType: 'objectId',
+          description: 'Referencia al cliente (usuario con rol cliente).'
+        },
         nombre: {
           bsonType: 'string'
         },
@@ -73,21 +84,22 @@ db.createCollection('proyecto', {
       bsonType: 'object',
       required: ['clienteId','nombre', 'status', 'fechaInicio'],
       properties: {
-        clientId: {
+        clienteId: {
           bsonType: 'objectId',
-          description: 'Referencia al cliente.'
+          description: 'Referencia al cliente (usuario con rol cliente).'
+        },
+        propuestaId: {
+          bsonType: 'objectId',
+          description: 'Referencia a la propuesta aceptada.'
         },
         nombre: {
-          bsonType: 'string',
-          description: 'Nombre del proyecto.'
+          bsonType: 'string'
         },
         description: {
-          bsonType: 'string',
-          description: 'Descripción del proyecto.'
+          bsonType: 'string'
         },
         status: {
-          enum: ['active', 'paused', 'completed', 'cancelled'],
-          description: 'Estado actual del proyecto.'
+          enum: ['active', 'paused', 'completed', 'cancelled']
         },
         progreso: {
           bsonType: 'array',
@@ -116,9 +128,9 @@ db.createCollection('contrato', {
   validator: {
     $jsonSchema: {
       bsonType: 'object',
-      required: ['proyectoId', 'totalValue', 'fechaInicio'],
+      required: ['proyectoId', 'valor', 'fechaInicio'],
       properties: {
-        projectId: {
+        proyectoId: {
           bsonType: 'objectId'
         },
         terminos: {
@@ -146,9 +158,9 @@ db.createCollection('entregable', {
   validator: {
     $jsonSchema: {
       bsonType: 'object',
-      required: ['proyectoId', 'nombre', 'fechaFin', 'status'],
+      required: ['proyectoId', 'nombre', 'deadline', 'status'],
       properties: {
-        projectId: {
+        proyectoId: {
           bsonType: 'objectId',
           description: 'Referencia al proyecto.'
         },
@@ -168,7 +180,6 @@ db.createCollection('entregable', {
     }
   }
 });
-
 // 7. Colección de Transacciones Financieras
 db.createCollection('transaccion', {
   validator: {
@@ -196,5 +207,4 @@ db.createCollection('transaccion', {
     }
   }
 });
-
 

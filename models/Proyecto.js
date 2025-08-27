@@ -1,21 +1,21 @@
-class Proyecto {
-  constructor({ id, clienteId, nombre, description, status, progreso, fechaInicio, endDate }) {
-    if (!clienteId) throw new Error("El clienteId es requerido");
-    if (!nombre || typeof nombre !== "string") throw new Error("El nombre es requerido y debe ser un string");
-    if (!["active", "paused", "completed", "cancelled"].includes(status)) {
-      throw new Error("El status debe ser válido: active, paused, completed, cancelled");
-    }
-    if (!fechaInicio) throw new Error("La fechaInicio es requerida");
+const { getDB } = require("../db");
 
-    this.id = id;
-    this.clienteId = clienteId;
-    this.nombre = nombre;
-    this.description = description || "";
-    this.status = status;
-    this.progreso = progreso || [];
-    this.fechaInicio = new Date(fechaInicio);
-    this.endDate = endDate ? new Date(endDate) : null;
-    this.createdAt = new Date();
+class Proyecto {
+  static col() {
+    return getDB().collection("proyecto");
+  }
+
+  static async create(doc) {
+    const res = await this.col().insertOne(doc);
+    return await this.col().findOne({ _id: res.insertedId });
+  }
+
+  static async listByCliente(clienteId) {
+    return await this.col().find({ clienteId }).toArray();
+  }
+
+  static async findById(_id) {
+    return await this.col().findOne({ _id });
   }
 }
 

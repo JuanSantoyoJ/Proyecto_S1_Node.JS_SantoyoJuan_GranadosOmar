@@ -1,75 +1,78 @@
-const prompt = require("prompt-sync")(); // 👈 importante los paréntesis
-const ClientService = require("../controllers/clienteController.js");
+const prompt = require("prompt-sync")();
+const UsuarioController = require("../controllers/usuarioController");
+const PropuestaController = require("../controllers/propuestaController");
+const ProyectoController = require("../controllers/proyectoController");
+const TransaccionController = require("../controllers/transaccionController");
 
-async function createClient() {
-  const { default: chalk } = await import("chalk");
-  
-  const nombre = prompt("Nombre del cliente: ");
-  const correo = prompt("Correo electrónico: ");
-  const empresa = prompt("Empresa (opcional): ");
+class ClienteView {
+  async show(currentUser) {
+    console.log(`
+=== MENÚ CLIENTE ===
+1. Ver mi información
+2. Actualizar mi información
+3. Crear propuesta
+4. Registrar ingreso en un proyecto
+0. Cerrar sesión
+`);
+    const op = prompt("Opción: ");
 
-  const data = { nombre, correo, empresa: empresa || null };
-
-  try {
-    const client = await ClientService.create(data);
-    console.log(chalk.green("✅ Cliente creado:"), client);
-  } catch (error) {
-    console.log(chalk.red("❌ Error al crear cliente:"), error.message);
-  }
-}
-
-async function listClients() {
-  const { default: chalk } = await import("chalk");
-  
-  try {
-    const clients = await ClientService.list();
-    console.table(clients);
-  } catch (error) {
-    console.log(chalk.red("❌ Error al listar clientes:"), error.message);
-  }
-}
-
-async function updateClient() {
-  await listClients();
-  const { default: chalk } = await import("chalk");
-
-  const clientId = prompt("ID del cliente a actualizar: ");
-  const nombre = prompt("Nuevo nombre (dejar vacío para no cambiar): ");
-  const correo = prompt("Nuevo correo (dejar vacío para no cambiar): ");
-  const empresa = prompt("Nueva empresa (dejar vacío para no cambiar): ");
-
-  try {
-    const data = {};
-    if (nombre) data.nombre = nombre;
-    if (correo) data.correo = correo;
-    if (empresa) data.empresa = empresa;
-
-    const updatedClient = await ClientService.update(clientId, data);
-    console.log(chalk.green("✅ Cliente actualizado:"), updatedClient);
-    console.log(chalk.blue("\nLista de clientes actualizada:\n"));
-    await listClients();
-  } catch (error) {
-    console.log(chalk.red("❌ Error al actualizar cliente:"), error.message);
-  }
-}
-
-async function deleteClient() {
-  await listClients();
-  const { default: chalk } = await import("chalk");
-
-  const clientId = prompt("ID del cliente a eliminar: ");
-
-  try {
-    const success = await ClientService.delete(clientId);
-    if (success) {
-      console.log(chalk.green("✅ Cliente eliminado"));
-    } else {
-      console.log(chalk.yellow("⚠️ No se encontró el cliente con ese ID"));
+    if (op === "1") {
+      console.log({
+        _id: currentUser._id.toString(),
+        nombre: currentUser.nombre,
+        correo: currentUser.correo,
+        empresa: currentUser.empresa || null,
+        rol: currentUser.rol
+      });
     }
-    console.log(chalk.blue("\nLista de clientes actualizada:\n"));
-    await listClients();
-  } catch (error) {
-    console.log(chalk.red("❌ Error al eliminar cliente:"), error.message);
+
+    if (op === "2") {
+      const nombre = prompt("Nuevo nombre (enter = igual): ");
+      const correo = prompt("Nuevo correo (enter = igual): ");
+      const empresa = prompt("Nueva empresa (enter = igual): ");
+      const data = {};
+      if (nombre) data.nombre = nombre;
+      if (correo) data.correo = correo;
+      if (empresa) data.empresa = empresa;
+      const upd = await UsuarioController.updateUsuario(currentUser._id, data);
+      console.log("✅ Actualizado:", upd);
+      return upd; // refrescamos usuario
+    }
+
+    if (op === "3") {
+      const nombre = prompt("Nombre de la propuesta: ");
+      const descripcion = prompt("Descripción: ");
+      const precio = prompt("Precio: ");
+      const prop = await PropuestaController.create({ clienteId: currentUser._id, nombre, descripcion, precio });
+      console.log("✅ Propuesta creada:", prop);
+    }
+
+    if (op === "4") {
+      const proyectos = await ProyectoController.listByCliente(currentUser._id);
+      if (!proyectos.length) {
+        console.log("Aún no tienes proyectos.");
+      } else {
+        console.table(proyectos.map(p => ({
+          _id: p._id.toString(),
+          nombre: p.nombre,
+          status: p.status,
+          fechaInicio: p.fechaInicio?.toISOString()?.slice(0,10)
+        })));
+        const proyectoId = prompt("ID del proyecto: ");
+        const cantidad = prompt("Cantidad: ");
+        const descripcion = prompt("Descripción: ");
+        const tx = await TransaccionController.create({ proyectoId, tipo: "ingreso", cantidad, descripcion, rolQuienCrea: "cliente" });
+        console.log("✅ Ingreso registrado:", tx);
+      }
+    }
+
+    if (op === "0") {
+      console.log("🔒 Sesión cerrada");
+      return null;
+    }
+
+    return currentUser;
   }
 }
-module.exports = { createClient, listClients, updateClient, deleteClient };
+
+module.exports = ClienteView;
