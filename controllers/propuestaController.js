@@ -46,7 +46,6 @@ class PropuestaController {
       nombre: prop.nombre,
       description: prop.descripcion || "",
       status: "active",
-      progreso: [],
       fechaInicio: new Date()
     });
 

@@ -86,6 +86,17 @@ class AdminView {
     }
 
     if (op === "5") {
+      const activos = await ProyectoController.listActivos();
+      if (!activos.length) {
+        console.log("No hay proyectos activos.");
+      } else {
+        console.table(activos.map(p => ({
+          _id: p._id.toString(),
+          clienteId: p.clienteId.toString(),
+          nombre: p.nombre,
+          descripcion: p.descripcion,
+          status: p.status
+        })));
       const proyectoId = prompt("ID del proyecto: ");
       const nombre = prompt("Nombre del entregable: ");
       const descripcion = prompt("Descripción: ");
@@ -93,7 +104,7 @@ class AdminView {
       const ent = await EntregableController.create({ proyectoId, nombre, descripcion, deadline: deadline || null });
       console.log("✅ Entregable creado:", ent);
     }
-
+  }
     if (op === "6") {
       const proyectoId = prompt("ID del proyecto: ");
       const tipo = prompt("Tipo (ingreso/gasto): ");
@@ -108,8 +119,10 @@ class AdminView {
       continuar=false;
       return null;
     }
-  }
+  
   }
 }
+}
+
 
 module.exports = AdminView;

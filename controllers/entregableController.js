@@ -10,8 +10,7 @@ class EntregableController {
       proyectoId: pid,
       nombre,
       descripcion: descripcion || "",
-      deadline: deadline ? new Date(deadline) : new Date(),
-      status: "pendiente"
+      deadline: deadline ? new Date(deadline) : new Date()
     });
   }
 

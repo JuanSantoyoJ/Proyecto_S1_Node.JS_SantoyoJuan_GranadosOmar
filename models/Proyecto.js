@@ -17,6 +17,10 @@ class Proyecto {
     const col = await this.col();
     return await col.find({ clienteId }).toArray();
   }
+  static async listActivos() {
+    const col = await this.col();
+    return await col.find({ status: "active" }).toArray();
+  }
 
   static async findById(id) {
     const col = await this.col();
