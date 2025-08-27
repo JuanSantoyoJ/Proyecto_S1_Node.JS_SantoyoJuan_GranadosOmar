@@ -174,6 +174,7 @@ Este proyecto fue desarrollado siguiendo la metodología ágil SCRUM, implementa
 La implementación de SCRUM nos permitió mantener un desarrollo organizado, con entregas incrementales de valor y una comunicación efectiva entre los miembros del equipo, asegurando la calidad del producto final y el cumplimiento de los plazos establecidos.
 
 **[Documentación de SCRUM](./SCRUM/Proyecto_NodeS1_SantoyoJuan_OmarGranados.docx.pdf)**
+**[Trello](https://trello.com/b/Wubqyf4B/gestor-de-portafolio-freelance)**
 
 ---
 
