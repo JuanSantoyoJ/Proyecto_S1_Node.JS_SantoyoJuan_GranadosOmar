@@ -19,5 +19,5 @@ async function connectDB(){
 async function disconnect(){
     if(client) await client.close();
 }
-
+connectDB();
 module.exports={connectDB, disconnect};

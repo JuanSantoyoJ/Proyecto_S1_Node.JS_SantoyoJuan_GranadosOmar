@@ -1,29 +1,38 @@
-const { getDB } = require("../db");
+const { connectDB } = require("../db");
+const { ObjectId } = require("mongodb");
 
 class Usuario {
-  static col() {
-    return getDB().collection("usuarios");
+  static async col() {
+    const db = await connectDB();
+    return db.collection("usuarios");
   }
 
   static async create(doc) {
-    return await this.col().insertOne(doc);
+    const col = await this.col();
+    return await col.insertOne(doc);
   }
 
   static async findByCorreo(correo) {
-    return await this.col().findOne({ correo });
+    const col = await this.col();
+    return await col.findOne({ correo });
   }
 
   static async findById(id) {
-    return await this.col().findOne({ _id: id });
+    const col = await this.col();
+    const _id = typeof id === "string" ? new ObjectId(id) : id;
+    return await col.findOne({ _id });
   }
 
   static async list() {
-    return await this.col().find({}, { projection: { contrasena: 0 } }).toArray();
+    const col = await this.col();
+    return await col.find({}, { projection: { contrasena: 0 } }).toArray();
   }
 
-  static async updateById(_id, data) {
-    await this.col().updateOne({ _id }, { $set: data });
-    return await this.col().findOne({ _id }, { projection: { contrasena: 0 } });
+  static async updateById(id, data) {
+    const col = await this.col();
+    const _id = typeof id === "string" ? new ObjectId(id) : id;
+    await col.updateOne({ _id }, { $set: data });
+    return await col.findOne({ _id }, { projection: { contrasena: 0 } });
   }
 }
 
