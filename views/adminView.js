@@ -7,6 +7,8 @@ const TransaccionController = require("../controllers/transaccionController");
 
 class AdminView {
   async show() {
+    let continuar = true
+    while(continuar){
     console.log(`
 === MENÚ ADMIN ===
 1. Crear usuario (cliente)
@@ -103,8 +105,10 @@ class AdminView {
 
     if (op === "0") {
       console.log("🔒 Sesión cerrada");
+      continuar=false;
       return null;
     }
+  }
   }
 }
 
