@@ -32,9 +32,17 @@ class UsuarioController {
 
   static async updateUsuario(id, data) {
     const _id = typeof id === "string" ? new ObjectId(id) : id;
-    // No permitir cambiar contrasena aquí (o hacerlo explícito si lo deseas)
     if ("contrasena" in data) delete data.contrasena;
     return await Usuario.updateById(_id, data);
+  }
+
+  // 🔹 Nuevo método para ClienteView
+  static async findById(id) {
+    const _id = typeof id === "string" ? new ObjectId(id) : id;
+    const user = await Usuario.findById(_id);
+    if (!user) return null;
+    delete user.contrasena; // opcional: no devolver contraseña
+    return user;
   }
 }
 
