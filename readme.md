@@ -67,6 +67,13 @@
 ---
 <h1 align="center";>
 
+<h1 align="center";>
+Video Explicativo del Proyecto
+</h1>
+
+El siguiente video presenta de manera integral todo el desarrollo del proyecto, incluyendo su contexto, diseño, implementación y demostración práctica del sistema.
+
+**[Enlace al video](https://drive.google.com/drive/folders/1KvPUbbfGupX7Dd0IkIHHCYJ7EpDqua0Q?usp=drive_link)**  
 # Introducción
 
 </h1>
