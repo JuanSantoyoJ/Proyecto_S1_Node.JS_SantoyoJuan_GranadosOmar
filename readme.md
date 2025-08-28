@@ -1,7 +1,5 @@
 <h3 align="center";>
-
-**GESTOR DE PORTAFOLIO DE PROYECTOS FREELANCE**
-
+<b>GESTOR DE PORTAFOLIO DE PROYECTOS FREELANCE</b>
 </h3>
 
 <br>
@@ -127,6 +125,7 @@ Para ejecutar correctamente la aplicación, es necesario contar con el siguiente
 
 </h1>
 
+
 Para instalar y ejecutar este proyecto localmente, sigue estos pasos:
 
 1.  **Clona el repositorio:**
@@ -146,9 +145,10 @@ Para instalar y ejecutar este proyecto localmente, sigue estos pasos:
 
 4.  **Configura las variables de entorno:**
     *   Crea un archivo `.env` en la raíz del proyecto.
-    *   Añade la siguiente línea, reemplazando `<TU_CONNECTION_STRING>` con tu cadena de conexión de MongoDB:
+    *   Añade las siguientes líneas, reemplazando los valores por los de tu base de datos:
         ```
-        MONGO_URI=<TU_CONNECTION_STRING>
+        URI=<TU_CONNECTION_STRING>
+        DB_NAME=<NOMBRE_BD>
         ```
 
 5.  **Ejecuta la aplicación:**
@@ -174,6 +174,7 @@ Este proyecto fue desarrollado siguiendo la metodología ágil SCRUM, implementa
 La implementación de SCRUM nos permitió mantener un desarrollo organizado, con entregas incrementales de valor y una comunicación efectiva entre los miembros del equipo, asegurando la calidad del producto final y el cumplimiento de los plazos establecidos.
 
 **[Documentación de SCRUM](./SCRUM/Proyecto_NodeS1_SantoyoJuan_OmarGranados.docx.pdf)**
+
 **[Trello](https://trello.com/b/Wubqyf4B/gestor-de-portafolio-freelance)**
 
 ---
@@ -188,45 +189,54 @@ La implementación de SCRUM nos permitió mantener un desarrollo organizado, con
 
 El modelo conceptual proporciona una descripción de alto nivel de las necesidades de información del sistema. Representa los conceptos principales (entidades) y las relaciones entre ellos, sin considerar aspectos técnicos de implementación.
 
+
 ### **Entidades y Atributos**
 
-1.  **Cliente:** Representa a un cliente del freelancer.
-    -   `nombre`: Nombre completo del cliente
-    -   `correo`: Correo electrónico de contacto
-    -   `empresa`: Empresa a la que pertenece (opcional)
-    -   `telefono`: Número de contacto (opcional)
+1.  **Usuario:** Representa a un usuario del sistema (puede ser admin o cliente).
+    -   `nombre`: Nombre completo
+    -   `correo`: Correo electrónico (único)
+    -   `contrasena`: Contraseña
+    -   `empresa`: Empresa (opcional)
+    -   `rol`: "admin" o "cliente"
+    -   `createdAt`: Fecha de registro
 
-2.  **Propuesta:** Documento de oferta comercial para un posible proyecto.
-    -   `nombre`: Título descriptivo de la propuesta
+2.  **Propuesta:** Oferta comercial para un posible proyecto.
+    -   `clienteId`: Referencia a usuario (cliente)
+    -   `nombre`: Título de la propuesta
     -   `descripcion`: Detalles técnicos y alcance
-    -   `precio`: Costo estimado del servicio
-    -   `plazo`: Tiempo estimado de entrega
-    -   `estado`: Estado actual (pendiente, aceptada, rechazada)
+    -   `precio`: Costo estimado
+    -   `status`: Estado actual (pendiente, aceptado, rechazado)
+    -   `createdAt`: Fecha de creación
 
 3.  **Proyecto:** Trabajo contratado y en desarrollo.
+    -   `clienteId`: Referencia a usuario (cliente)
+    -   `propuestaId`: Referencia a propuesta
     -   `nombre`: Nombre del proyecto
-    -   `descripcion`: Descripción detallada
-    -   `estado`: Estado actual (activo, pausado, finalizado, cancelado)
-    -   `fechaInicio`: Fecha de inicio del proyecto
-    -   `fechaFin`: Fecha de finalización (opcional)
+    -   `description`: Descripción detallada
+    -   `status`: Estado actual (active, paused, completed, cancelled)
+    -   `fechaInicio`: Fecha de inicio
+    -   `endDate`: Fecha de finalización (opcional)
 
 4.  **Contrato:** Acuerdo formal que rige el proyecto.
-    -   `condiciones`: Términos y condiciones del acuerdo
-    -   `fechaInicio`: Fecha de inicio contractual
-    -   `fechaFin`: Fecha de finalización contractual
+    -   `proyectoId`: Referencia a proyecto
+    -   `terminos`: Términos y condiciones
     -   `valor`: Monto total acordado
+    -   `fechaInicio`: Fecha de inicio contractual
+    -   `fechaFin`: Fecha de finalización contractual (opcional)
+    -   `fechaAsignada`: Fecha de asignación
 
 5.  **Entregable:** Producto o hito específico dentro de un proyecto.
-    -   `titulo`: Nombre del entregable
+    -   `proyectoId`: Referencia a proyecto
+    -   `nombre`: Nombre del entregable
     -   `descripcion`: Descripción detallada
-    -   `fechaLimite`: Fecha límite de entrega
-    -   `estado`: Estado actual (pendiente, entregado, aprobado, rechazado)
+    -   `deadline`: Fecha límite de entrega
 
 6.  **Transacción:** Movimiento financiero asociado al proyecto.
-    -   `tipo`: Tipo de movimiento (ingreso, egreso)
-    -   `monto`: Cantidad monetaria
-    -   `fecha`: Fecha de la transacción
+    -   `proyectoId`: Referencia a proyecto
+    -   `tipo`: Tipo de movimiento (ingreso, gasto)
+    -   `cantidad`: Cantidad monetaria
     -   `descripcion`: Detalle del movimiento
+    -   `fecha`: Fecha de la transacción
 
 ### **Relaciones y Cardinalidades**
 
@@ -296,7 +306,7 @@ erDiagram
 
 ## Construcción del Modelo Lógico (Modelado NoSQL - MongoDB)
 
-En esta fase, se traduce el modelo conceptual a una estructura de colecciones y documentos para MongoDB. Las decisiones clave giran en torno a si usar **referencias** (linking) o **documentos embebidos** (embedding).
+En esta fase, se traduce el modelo conceptual a una estructura de colecciones y documentos para MongoDB.
 
 ### **Estrategia de Modelado**
 
@@ -318,92 +328,82 @@ Se usará para relaciones 1:N donde las entidades "N" pueden crecer indefinidame
 #### **Documentos Embebidos (Embedding):**
 Se consideró para relaciones 1:1 o datos intrínsecos pequeños, pero se priorizaron las referencias para mayor flexibilidad.
 
-### **Colecciones y Estructura de Documentos**
 
-#### **1. Colección `clients`**
+### **Colecciones y Estructura de Documentos (según el código actual)**
+
+#### **Colección `usuarios`**
 ```javascript
 {
-  _id: ObjectId,
-  name: String,           // Nombre del cliente
-  email: String,          // Correo electrónico (único)
-  company: String,        // Empresa (opcional)
-  phone: String,          // Teléfono (opcional)
-  createdAt: Date         // Fecha de registro
+    _id: ObjectId,
+    nombre: String,
+    correo: String,
+    contrasena: String,
+    empresa: String,
+    rol: String, // "admin" o "cliente"
+    createdAt: Date
 }
 ```
 
-#### **2. Colección `proposals`**
+#### **Colección `propuesta`**
 ```javascript
 {
-  _id: ObjectId,
-  clientId: ObjectId,     // Referencia a clients._id
-  name: String,           // Título de la propuesta
-  description: String,    // Descripción detallada
-  price: Number,          // Precio propuesto
-  deadline_estimate: String, // Estimación de tiempo
-  status: String,         // 'pending', 'accepted', 'rejected'
-  createdAt: Date         // Fecha de creación
+    _id: ObjectId,
+    clienteId: ObjectId, // Referencia a usuarios._id
+    nombre: String,
+    descripcion: String,
+    precio: Number,
+    status: String, // "pendiente", "aceptado", "rechazado"
+    createdAt: Date
 }
 ```
 
-#### **3. Colección `projects`**
+#### **Colección `proyecto`**
 ```javascript
 {
-  _id: ObjectId,
-  clientId: ObjectId,     // Referencia a clients._id
-  proposalId: ObjectId,   // Referencia a proposals._id
-  name: String,           // Nombre del proyecto
-  description: String,    // Descripción del proyecto
-  status: String,         // 'active', 'paused', 'completed', 'cancelled'
-  progress_log: [         // Array embebido para el log de progreso
-    {
-      date: Date,
-      note: String
-    }
-  ],
-  startDate: Date,        // Fecha de inicio
-  endDate: Date,          // Fecha de finalización (opcional)
-  createdAt: Date         // Fecha de creación
+    _id: ObjectId,
+    clienteId: ObjectId, // Referencia a usuarios._id
+    propuestaId: ObjectId, // Referencia a propuesta._id
+    nombre: String,
+    description: String,
+    status: String, // "active", "paused", "completed", "cancelled"
+    fechaInicio: Date,
+    endDate: Date
 }
 ```
 
-#### **4. Colección `contracts`**
+#### **Colección `contrato`**
 ```javascript
 {
-  _id: ObjectId,
-  projectId: ObjectId,    // Referencia a projects._id
-  terms: String,          // Términos y condiciones
-  totalValue: Number,     // Valor total del contrato
-  startDate: Date,        // Fecha de inicio contractual
-  endDate: Date,          // Fecha de finalización contractual
-  signedAt: Date,         // Fecha de firma
-  createdAt: Date         // Fecha de creación
+    _id: ObjectId,
+    proyectoId: ObjectId, // Referencia a proyecto._id
+    terminos: String,
+    valor: Number,
+    fechaInicio: Date,
+    fechaFin: Date,
+    fechaAsignada: Date
 }
 ```
 
-#### **5. Colección `deliverables`**
+#### **Colección `entregable`**
 ```javascript
 {
-  _id: ObjectId,
-  projectId: ObjectId,    // Referencia a projects._id
-  name: String,           // Nombre del entregable
-  description: String,    // Descripción del entregable
-  deadline: Date,         // Fecha límite de entrega
-  status: String,         // 'pending', 'delivered', 'approved', 'rejected'
-  createdAt: Date         // Fecha de creación
+    _id: ObjectId,
+    proyectoId: ObjectId, // Referencia a proyecto._id
+    nombre: String,
+    descripcion: String,
+    deadline: Date
 }
 ```
 
-#### **6. Colección `transactions`**
+#### **Colección `transaccion`**
 ```javascript
 {
-  _id: ObjectId,
-  projectId: ObjectId,    // Referencia a projects._id
-  type: String,           // 'income', 'expense'
-  amount: Number,         // Monto (siempre positivo)
-  description: String,    // Descripción del movimiento
-  date: Date,             // Fecha de la transacción
-  createdAt: Date         // Fecha de registro
+    _id: ObjectId,
+    proyectoId: ObjectId, // Referencia a proyecto._id
+    tipo: String, // "ingreso" o "gasto"
+    cantidad: Number,
+    descripcion: String,
+    fecha: Date
 }
 ```
 
@@ -473,49 +473,42 @@ El modelo físico define la implementación final en MongoDB, incluyendo los tip
 
 -   **Para crear y usar la base de datos:**
     ```javascript
-    use GestorFreelanceDB
+    use Proyecto_NodeJS
     ```
 
 -   **Creación de Colecciones con Validación de Esquema:**
 
-    1.  **Colección `clients`**
+    1.  **Colección `usuarios`**
         ```javascript
-        db.createCollection("clients", {
-           validator: {
-              $jsonSchema: {
-                 bsonType: "object",
-                 required: ["name", "email"],
-                 properties: {
-                    name: { bsonType: "string", description: "must be a string and is required" },
-                    email: { bsonType: "string", pattern: "@mongodb\.com$", description: "must be a string and match the regular expression pattern" },
-                    company: { bsonType: "string", description: "must be a string if the field exists" }
-                 }
-              }
-           }
-        })
+        db.createCollection('usuarios', {
+        validator: {
+            $jsonSchema: {
+            bsonType: 'object',
+            required: ['nombre', 'correo', 'contrasena', 'rol', 'createdAt'],
+            properties: {
+                nombre: {
+                bsonType: 'string'
+                },
+                correo: {
+                bsonType: 'string'
+                },
+                contrasena: {
+                bsonType: 'string'
+                },
+                empresa:{
+                bsonType: "string"
+                },
+                rol: {
+                enum: ['admin', 'cliente']
+                },
+                createdAt: {
+                bsonType: 'date'
+                }
+            }
+            }
+        }
+        });
         ```
-
-    2.  **Colección `projects`**
-        ```javascript
-        db.createCollection("projects", {
-           validator: {
-              $jsonSchema: {
-                 bsonType: "object",
-                 required: ["clientId", "name", "status"],
-                 properties: {
-                    clientId: { bsonType: "objectId", description: "must be an objectId and is required" },
-                    name: { bsonType: "string", description: "must be a string and is required" },
-                    description: { bsonType: "string" },
-                    status: { enum: ["active", "completed", "paused"], description: "can only be one of the enum values and is required" },
-                    startDate: { bsonType: "date" },
-                    endDate: { bsonType: "date" }
-                 }
-              }
-           }
-        })
-        ```
-    *(... y así sucesivamente para las demás colecciones: `proposals`, `contracts`, `deliverables`, `transactions`, cada una con su respectivo esquema y referencias a otras colecciones mediante `bsonType: "objectId"`)*
-
 ---
 <h1 align="center";>
 
@@ -525,42 +518,27 @@ El modelo físico define la implementación final en MongoDB, incluyendo los tip
 
 El proyecto está organizado siguiendo una arquitectura que separa las responsabilidades en diferentes capas, facilitando su mantenimiento y escalabilidad.
 
+
 ```
 /
 ├── app.js                # Punto de entrada de la aplicación
 ├── db.js                 # Configuración y conexión de la base de datos
 ├── package.json          # Dependencias y scripts del proyecto
 ├── README.md             # Documentación del proyecto
-├── commands/             # (Patrón Command) Comandos que encapsulan las acciones
 ├── controllers/          # Lógica de negocio y coordinación
 ├── models/               # Definición de los modelos de datos
-├── repositories/         # (Patrón Repository) Abstracción del acceso a datos
+├── ddl.js                # Comandos para la base de datos
+├── factory/              # Factories para validación y creación de entidades
 └── views/                # Manejo de la interfaz de línea de comandos (CLI)
 ```
 
-## Principios SOLID Aplicados
 
--   **Principio de Responsabilidad Única (SRP):** Cada clase tiene una única responsabilidad. Las `Views` manejan la interacción con el usuario, los `Controllers` orquestan la lógica de negocio, los `Repositories` gestionan el acceso a datos y los `Models` definen la estructura de los datos.
--   **Principio de Abierto/Cerrado (OCP):** La arquitectura permite añadir nuevas funcionalidades (como nuevos comandos o entidades) creando nuevas clases sin necesidad de modificar el código existente.
--   **Principio de Sustitución de Liskov (LSP):** Se aplica en la implementación de los patrones, donde las clases base pueden ser sustituidas por sus subtipos sin alterar el comportamiento del programa.
--   **Principio de Segregación de Interfaces (ISP):** Se definen interfaces específicas para cada tipo de operación, evitando que las clases implementen métodos que no necesitan.
--   **Principio de Inversión de Dependencias (DIP):** Los módulos de alto nivel (Controllers) no dependen de los de bajo nivel (Repositories), sino de abstracciones. Esto se logra mediante la inyección de dependencias.
+## Principios y Consideraciones Técnicas
 
-## Patrones de Diseño Usados
-
--   **Patrón Repository:**
-    -   **Ubicación:** Carpeta `/repositories`.
-    -   **Propósito:** Desacopla la lógica de negocio de la lógica de acceso a datos. Los controladores utilizan los repositorios para obtener y guardar datos sin conocer los detalles de la implementación de la base de datos. Esto facilita las pruebas y permite cambiar de motor de base de datos con un impacto mínimo.
-
--   **Patrón Command:**
-    -   **Ubicación:** Carpeta `/commands`.
-    -   **Propósito:** Encapsula una solicitud como un objeto, permitiendo parametrizar clientes con diferentes solicitudes, encolar o registrar solicitudes. En este proyecto, cada acción del usuario (crear cliente, añadir proyecto) es un `Command` que la `View` instancia y el `Controller` ejecuta.
-
-## Consideraciones Técnicas
-
--   **Base de Datos:** Se utiliza el driver oficial de **MongoDB** (`mongodb`) para la persistencia de datos, evitando el uso de ODMs como Mongoose para tener un control más granular sobre las operaciones.
--   **Transacciones:** Las operaciones críticas que involucran múltiples pasos (como la creación de un proyecto a partir de una propuesta o los registros financieros) se envuelven en **transacciones de MongoDB** para garantizar la atomicidad y consistencia de los datos.
--   **Manejo de Errores:** La aplicación cuenta con un manejo de errores robusto para capturar fallos en la conexión a la base de datos, validaciones de datos y lógica de negocio, informando al usuario de manera clara.
+-   **Responsabilidad Única:** Cada clase tiene una única responsabilidad. Las `views` manejan la interacción con el usuario, los `controllers` orquestan la lógica de negocio, los `models` definen la estructura de los datos y los `factory` validan y crean entidades.
+-   **Base de Datos:** Se utiliza el driver oficial de **MongoDB** (`mongodb`) para la persistencia de datos, sin ODMs como Mongoose.
+-   **Manejo de Errores:** La aplicación cuenta con manejo de errores para capturar fallos en la conexión, validaciones y lógica de negocio, informando al usuario de manera clara.
+-   **Roles:** El sistema maneja roles de usuario (`admin` y `cliente`) y menús diferenciados en la CLI.
 
 ---
 <h1 align="center";>
@@ -572,6 +550,6 @@ El proyecto está organizado siguiendo una arquitectura que separa las responsab
 Este proyecto fue desarrollado por:
 
 -   **Juan Santoyo**
--   **Omar Fernandez**
+-   **Omar Granados**
 
 *Desarrollado entre el 21 y el 27 de agosto de 2025.*
