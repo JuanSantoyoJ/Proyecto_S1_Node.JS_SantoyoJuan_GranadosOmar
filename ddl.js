@@ -158,7 +158,7 @@ db.createCollection('entregable', {
   validator: {
     $jsonSchema: {
       bsonType: 'object',
-      required: ['proyectoId', 'nombre', 'deadline', 'status'],
+      required: ['proyectoId', 'nombre', 'deadline'],
       properties: {
         proyectoId: {
           bsonType: 'objectId',
@@ -172,9 +172,6 @@ db.createCollection('entregable', {
         },
         deadline: {
           bsonType: 'date'
-        },
-        status: {
-          enum: ['pendiente', 'finalizado']
         }
       }
     }

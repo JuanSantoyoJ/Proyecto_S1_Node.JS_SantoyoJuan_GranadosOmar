@@ -251,57 +251,68 @@ El modelo conceptual proporciona una descripción de alto nivel de las necesidad
 
 ```mermaid
 erDiagram
-    CLIENTE {
+    USUARIOS {
         string nombre
         string correo
-        string empresa
         string telefono
-    }
-    
-    PROPUESTA {
-        string nombre
-        string descripcion
-        decimal precio
-        string plazo
-        string estado
-    }
-    
-    PROYECTO {
-        string nombre
-        string descripcion
-        string estado
-        date fechaInicio
-        date fechaFin
-        array avances
-    }
-    
-    CONTRATO {
-        text condiciones
-        date fechaInicio
-        date fechaFin
-        decimal valor
-    }
-    
-    ENTREGABLE {
-        string titulo
-        text descripcion
-        date fechaLimite
-        string estado
-    }
-    
-    TRANSACCION {
-        string tipo
-        decimal monto
-        date fecha
-        text descripcion
+        string empresa
+        string contrasena
+        enum rol
+        date createdAt
     }
 
-    CLIENTE ||--o{ PROPUESTA : solicita
-    CLIENTE ||--o{ PROYECTO : contrata
-    PROPUESTA ||--o| PROYECTO : genera
-    PROYECTO ||--|| CONTRATO : "se formaliza con"
-    PROYECTO ||--o{ ENTREGABLE : contiene
-    PROYECTO ||--o{ TRANSACCION : registra
+    PROPUESTA {
+        objectId clienteId
+        string nombre
+        string descripcion
+        double precio
+        string plazo
+        enum status
+        date createdAt
+    }
+
+    PROYECTO {
+        objectId clienteId
+        objectId propuestaId
+        string nombre
+        string descripcion
+        enum status
+        array avances
+        date fechaInicio
+        date fechaFin
+    }
+
+    CONTRATO {
+        objectId proyectoId
+        string condiciones
+        double valor
+        date fechaInicio
+        date fechaFin
+    }
+
+    ENTREGABLE {
+        objectId proyectoId
+        string titulo
+        string descripcion
+        date deadline
+    }
+
+    TRANSACCION {
+        objectId proyectoId
+        enum tipo
+        double monto
+        string descripcion
+        date fecha
+    }
+
+    %% Relaciones
+    USUARIOS ||--o{ PROPUESTA : "realiza"
+    USUARIOS ||--o{ PROYECTO : "contrata"
+    PROPUESTA ||--o| PROYECTO : "origina"
+    PROYECTO ||--|| CONTRATO : "formaliza"
+    PROYECTO ||--o{ ENTREGABLE : "incluye"
+    PROYECTO ||--o{ TRANSACCION : "registra"
+
 ```
 
 ## Construcción del Modelo Lógico (Modelado NoSQL - MongoDB)
@@ -326,7 +337,7 @@ Se usará para relaciones 1:N donde las entidades "N" pueden crecer indefinidame
 - Ligeramente más complejo en consultas
 
 #### **Documentos Embebidos (Embedding):**
-Se consideró para relaciones 1:1 o datos intrínsecos pequeños, pero se priorizaron las referencias para mayor flexibilidad.
+Se evaluó su uso principalmente para relaciones 1:1 y para almacenar atributos pequeños e intrínsecos al documento. Sin embargo, se priorizó el uso de referencias (ObjectId) en la mayoría de los casos, con el fin de mantener la flexibilidad, evitar redundancia y facilitar la consistencia de datos en relaciones 1:N y N:M.
 
 
 ### **Colecciones y Estructura de Documentos (según el código actual)**
@@ -523,10 +534,10 @@ El proyecto está organizado siguiendo una arquitectura que separa las responsab
 /
 ├── app.js                # Punto de entrada de la aplicación
 ├── db.js                 # Configuración y conexión de la base de datos
+├── SCRUM                 # Detalles de requerimientos e historias de usuario
 ├── package.json          # Dependencias y scripts del proyecto
 ├── README.md             # Documentación del proyecto
 ├── controllers/          # Lógica de negocio y coordinación
-├── models/               # Definición de los modelos de datos
 ├── ddl.js                # Comandos para la base de datos
 ├── factory/              # Factories para validación y creación de entidades
 └── views/                # Manejo de la interfaz de línea de comandos (CLI)
