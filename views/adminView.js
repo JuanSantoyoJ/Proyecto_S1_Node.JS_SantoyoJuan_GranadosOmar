@@ -4,7 +4,7 @@ const PropuestaController = require("../controllers/propuestaController");
 const ProyectoController = require("../controllers/proyectoController");
 const EntregableController = require("../controllers/entregableController");
 const TransaccionController = require("../controllers/transaccionController");
-
+const ContratoController = require("../controllers/contratoController");
 class AdminView {
   async show() {
     let continuar = true
@@ -17,6 +17,7 @@ class AdminView {
 4. Ver propuestas pendientes y aceptar una
 5. Crear entregable
 6. Registrar transacción (ingreso/gasto)
+7. Exportar data de cliente
 0. Cerrar sesión
 `);
     const op = prompt("Opción: ");
@@ -113,7 +114,51 @@ class AdminView {
       const tx = await TransaccionController.create({ proyectoId, tipo, cantidad, descripcion, rolQuienCrea: "admin" });
       console.log("✅ Transacción registrada:", tx);
     }
-
+    // modalidad examen
+    //
+    //
+    if ( op === "7"){
+      const lista = await UsuarioController.listAll();
+      console.table(lista.map(u => ({
+        _id: u._id.toString(),
+        nombre: u.nombre
+      })
+      ));
+      const clienteID = prompt("ID del cliente: ");
+      const idObtenido = await UsuarioController.findById(clienteID);
+      console.log(idObtenido.nombre);
+      const proyectoscliente = await ProyectoController.listByCliente(clienteID);
+      for (let i = 0; i<proyectoscliente.length; i++){
+        const contratos = await ContratoController.findByProyecto(proyectoscliente[i]._id)
+        var contratoscliente = [contratos]
+      }
+        console.log(contratoscliente)
+      console.log(proyectoscliente);
+      for (let i = 0; i<proyectoscliente.length; i++){
+      const entregables = await EntregableController.listByProyecto(proyectoscliente[i]._id)
+      var entregablescliente = [entregables]
+      }
+      for ( let i = 0; i<proyectoscliente.length; i++){
+        const transaccion = await TransaccionController.listByProyecto(proyectoscliente[i]._id);
+        var transaccioncliente = [transaccion];
+      }
+      const datos = {
+        _id: idObtenido._id,
+        nombre: idObtenido.nombre,
+        correo: idObtenido.correo,
+        rol: idObtenido.rol,
+        proyectos: proyectoscliente,
+        contratos: contratoscliente,
+        entregables: entregablescliente,
+        transacciones: transaccioncliente,
+      }
+      const data = JSON.stringify(datos);
+      const fs = require('fs');
+      fs.writeFile('../exports/cliente_${idObtenido._id}', data, function(err, result){
+        if(err) console.log("error", err);
+        else console.log(result);
+      })
+    }
     if (op === "0") {
       console.log("🔒 Sesión cerrada");
       continuar=false;

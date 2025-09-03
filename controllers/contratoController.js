@@ -13,6 +13,10 @@ class ContratoController {
       fechaAsignada: new Date()
     });
   }
+  static async findByProyecto(proyectoId){
+    const id = typeof proyectoId === "string" ? new ObjectId(proyectoId) : proyectoId;
+    return await Contrato.findByProyecto(id);
+  }
 }
 
 module.exports = ContratoController;

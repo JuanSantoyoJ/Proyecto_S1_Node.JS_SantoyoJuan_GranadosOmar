@@ -31,6 +31,10 @@ class TransaccionController {
       fecha: new Date()
     });
   }
+  static async listByProyecto(proyectoId){
+    const id = typeof proyectoId === "string" ? new ObjectId(proyectoId) : proyectoId;
+    return await Transaccion.listByProyecto(id);
+  }
 }
 
 module.exports = TransaccionController;
